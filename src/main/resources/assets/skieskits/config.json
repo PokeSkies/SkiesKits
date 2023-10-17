@@ -1,0 +1,19 @@
+{
+  "debug": false,
+  "economy": "IMPACTOR",
+  "storage": {
+    "type": "JSON",
+    "host": "localhost",
+    "port": 3306,
+    "database":  "skieskits",
+    "username": "root",
+    "password":  ""
+  },
+  "messages": {
+    "kit_not_found": "<red>Could not find a kit named %kit_name%!",
+    "kit_received": "<green>You have received the kit %kit_name%!",
+    "kit_failed_uses": "<red>You cannot claim the kit %kit_name% because you have reached the max uses!",
+    "kit_failed_cooldown": "<red>You cannot claim the kit %kit_name% because it's still on cooldown for another %kit_cooldown%!",
+    "kit_failed_requirements": "<red>You cannot claim the kit %kit_name% because you have not met the requirements!"
+  }
+}

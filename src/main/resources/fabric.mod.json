@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "SkiesKits",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/PokeSkies/SkiesKits"
+  },
+  "license": "All-Rights-Reserved",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.pokeskies.skieskits.SkiesKits"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.19",
+    "fabric": "*",
+    "minecraft": ">=1.20.1",
+    "java": ">=17",
+    "fabric-language-kotlin": ">=1.9.5",
+    "fabric-permissions-api-v0": "*",
+    "gooeylibs": ""
+  }
+}
