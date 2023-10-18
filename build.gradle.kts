@@ -59,8 +59,10 @@ dependencies {
 
     modImplementation("net.impactdev.impactor.api:economy:5.1.1-SNAPSHOT")
 
-    implementation("org.mongodb:mongodb-driver-sync:4.11.0")
-    implementation("org.mariadb.jdbc:mariadb-java-client:3.1.0")
+    implementation(include("org.mongodb:mongodb-driver-sync:4.11.0")!!)
+    implementation(include("org.mongodb:mongodb-driver-core:4.11.0")!!)
+    implementation(include("org.mongodb:bson:4.11.0")!!)
+    implementation(include("org.mariadb.jdbc:mariadb-java-client:3.1.0")!!)
 
     modImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }

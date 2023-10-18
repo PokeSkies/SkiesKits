@@ -4,7 +4,7 @@
   "storage": {
     "type": "JSON",
     "host": "localhost",
-    "port": 3306,
+    "port": 27017,
     "database":  "skieskits",
     "username": "root",
     "password":  ""

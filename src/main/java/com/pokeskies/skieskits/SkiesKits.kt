@@ -1,5 +1,6 @@
 package com.pokeskies.skieskits
 
+import ca.landonjw.gooeylibs2.api.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonReader
@@ -88,12 +89,18 @@ class SkiesKits : ModInitializer {
         }
 
         ServerPlayConnectionEvents.JOIN.register { event, _, _ ->
-            val player = event.player
-            for ((id, kit) in ConfigManager.KITS) {
-                if (kit.onJoin && kit.hasPermission(player)) {
-                    kit.claim(id, player)
+            Task.builder().execute { ctx ->
+                val player = event.player
+                if (!player.isDisconnected) {
+                    for ((id, kit) in ConfigManager.KITS) {
+                        if (kit.onJoin && kit.hasPermission(player)) {
+                            kit.claim(id, player)
+                        }
+                    }
                 }
             }
+            .delay(20L)
+            .build()
         }
     }
 

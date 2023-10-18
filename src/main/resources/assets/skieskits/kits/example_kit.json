@@ -1,8 +1,8 @@
 {
   "display_name": "Example Kit",
   "cooldown": 60,
-  "max_uses": -1,
-  "on_join": true,
+  "max_uses": 1,
+  "on_join": false,
   "notifications": true,
   "permission": "skieskits.kit.example_kit",
   "items": [

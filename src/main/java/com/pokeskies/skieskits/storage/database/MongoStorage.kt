@@ -1,13 +1,16 @@
 package com.pokeskies.skieskits.storage.database
 
 import com.google.gson.reflect.TypeToken
-import com.mongodb.ConnectionString
+import com.mongodb.MongoClientSettings
+import com.mongodb.MongoCredential
+import com.mongodb.ServerAddress
 import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import com.mongodb.client.model.ReplaceOptions
+import com.mongodb.connection.ClusterSettings
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.MainConfig
 import com.pokeskies.skieskits.data.KitData
@@ -25,9 +28,19 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
     private var userdataCollection: MongoCollection<Document>? = null
 
     init {
-        val connectionString = ConnectionString("mongodb://${config.username}:${config.password}@${config.host}:${config.port}")
         try {
-            this.mongoClient = MongoClients.create(connectionString)
+            val credential = MongoCredential.createCredential(
+                config.username,
+                config.database,
+                config.password.toCharArray()
+            )
+            val settings = MongoClientSettings.builder()
+                .credential(credential)
+                .applyToClusterSettings { builder: ClusterSettings.Builder ->
+                    builder.hosts(listOf(ServerAddress(config.host, config.port)))
+                }
+                .build()
+            this.mongoClient = MongoClients.create(settings)
             this.mongoDatabase = mongoClient!!.getDatabase(config.database)
             this.userdataCollection = this.mongoDatabase!!.getCollection("listings")
         } catch (e: Exception) {
