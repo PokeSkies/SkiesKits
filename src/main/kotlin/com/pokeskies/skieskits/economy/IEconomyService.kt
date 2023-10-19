@@ -1,5 +1,7 @@
 package com.pokeskies.skieskits.economy
 
+import com.pokeskies.skieskits.economy.services.ImpactorService
+import com.pokeskies.skieskits.economy.services.PebblesService
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.server.network.ServerPlayerEntity
 
@@ -16,6 +18,7 @@ interface IEconomyService {
             return try {
                 when (economyType) {
                     EconomyType.IMPACTOR -> ImpactorService()
+                    EconomyType.PEBBLES -> PebblesService()
                 }
             } catch (ex: Exception) {
                 Utils.error("There was an exception while initializing the Economy Service: ${economyType}. Is it loaded?")
