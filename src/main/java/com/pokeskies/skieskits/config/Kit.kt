@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.actions.ActionOptions
 import com.pokeskies.skieskits.config.requirements.Requirement
+import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
@@ -20,7 +21,7 @@ class Kit(
     val onJoin: Boolean = false,
     val notifications: Boolean = true,
     val items: List<KitItem> = emptyList(),
-    val requirements: Map<String, Requirement> = emptyMap(),
+    val requirements: RequirementOptions = RequirementOptions(),
     val actions: ActionOptions = ActionOptions(),
 ) {
     fun claim(kitId: String, player: ServerPlayerEntity, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
@@ -59,7 +60,7 @@ class Kit(
 
         if (!bypassRequirements) {
             var success = true
-            for ((id, requirement) in requirements) {
+            for ((id, requirement) in requirements.requirements) {
                 if (requirement.check(player)) {
                     requirement.executeSuccessActions(player, kitId, this, kitData)
                 } else {
@@ -69,6 +70,7 @@ class Kit(
             }
 
             if (!success) {
+                requirements.executeDenyActions(player, kitId, this, kitData)
                 actions.executeRequirementsActions(player, kitId, this, kitData)
                 if (notifications) {
                     player.sendMessage(
@@ -80,6 +82,8 @@ class Kit(
                 }
                 return
             }
+
+            requirements.executeSuccessActions(player, kitId, this, kitData)
         }
 
         for (item in items) {
