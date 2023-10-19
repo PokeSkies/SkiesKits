@@ -92,6 +92,7 @@ class Kit(
 
         kitData.uses += 1
         kitData.lastUse = System.currentTimeMillis()
+        userdata.kits[kitId] = kitData
 
         SkiesKits.INSTANCE.storage.saveUser(player.uuid, userdata)
 

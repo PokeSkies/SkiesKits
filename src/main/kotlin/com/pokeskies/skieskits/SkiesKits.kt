@@ -106,6 +106,8 @@ class SkiesKits : ModInitializer {
 
     fun reload() {
         this.configManager.reload()
+        this.storage = IStorage.load(configManager.config.storage)
+        this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
     }
 
     fun <T : Any> loadFile(filename: String, default: T, create: Boolean = false): T {

@@ -1,8 +1,8 @@
 package com.pokeskies.skieskits.data
 
 class KitData(
-    var uses: Int = 1,
-    var lastUse: Long = System.currentTimeMillis()
+    var uses: Int = 0,
+    var lastUse: Long = 0
 ) {
     fun checkUsage(maxUses: Int): Boolean {
         return maxUses !in 1..uses
