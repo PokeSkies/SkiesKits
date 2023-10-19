@@ -15,4 +15,8 @@ class KitData(
     fun getTimeRemaining(cooldown: Int): Long {
         return if (cooldown > 0) ((lastUse + (cooldown * 1000)) - System.currentTimeMillis()) / 1000 else 0
     }
+
+    override fun toString(): String {
+        return "KitData(uses=$uses, lastUse=$lastUse)"
+    }
 }

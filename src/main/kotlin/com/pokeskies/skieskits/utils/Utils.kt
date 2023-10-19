@@ -31,11 +31,11 @@ object Utils {
     }
 
     fun info(message: String?) {
-        SkiesKits.LOGGER.error("[SkiesKits] $message")
+        SkiesKits.LOGGER.info("[SkiesKits] $message")
     }
 
     fun getFormattedTime(time: Long): String {
-        if (time <= 0) return "0"
+        if (time <= 0) return "1s"
         val timeFormatted: MutableList<String> = ArrayList()
         val days = time / 86400
         val hours = time % 86400 / 3600

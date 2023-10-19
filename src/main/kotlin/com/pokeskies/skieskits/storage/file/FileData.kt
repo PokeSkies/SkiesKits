@@ -5,4 +5,7 @@ import java.util.*
 
 class FileData {
     var userdata: HashMap<UUID, UserData> = HashMap()
+    override fun toString(): String {
+        return "FileData(userdata=$userdata)"
+    }
 }
