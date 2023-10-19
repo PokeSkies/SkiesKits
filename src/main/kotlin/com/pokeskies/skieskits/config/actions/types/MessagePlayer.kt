@@ -1,6 +1,5 @@
 package com.pokeskies.skieskits.config.actions.types
 
-import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.config.actions.ActionType

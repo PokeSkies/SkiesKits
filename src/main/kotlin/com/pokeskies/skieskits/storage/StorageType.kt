@@ -1,7 +1,5 @@
 package com.pokeskies.skieskits.storage
 
-import com.pokeskies.skieskits.economy.EconomyType
-
 enum class StorageType(val identifier: String) {
     JSON("json"),
     MONGO("mongo");

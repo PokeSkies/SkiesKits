@@ -10,7 +10,6 @@ import net.minecraft.registry.Registry
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import java.lang.reflect.Type
-import java.util.ArrayList
 import java.util.function.Function
 
 

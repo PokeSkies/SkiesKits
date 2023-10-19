@@ -6,7 +6,10 @@ import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.utils.Utils
-import java.io.*
+import java.io.File
+import java.io.FileInputStream
+import java.io.InputStream
+import java.io.InputStreamReader
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption

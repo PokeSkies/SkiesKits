@@ -1,6 +1,5 @@
 package com.pokeskies.skieskits.config.requirements.types
 
-import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.config.requirements.ComparisonType
 import com.pokeskies.skieskits.config.requirements.Requirement

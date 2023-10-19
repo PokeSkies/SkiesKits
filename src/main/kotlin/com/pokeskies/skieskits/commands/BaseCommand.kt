@@ -3,7 +3,10 @@ package com.pokeskies.skieskits.commands
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.pokeskies.skieskits.commands.subcommands.*
+import com.pokeskies.skieskits.commands.subcommands.ClaimCommand
+import com.pokeskies.skieskits.commands.subcommands.DebugCommand
+import com.pokeskies.skieskits.commands.subcommands.GiveCommand
+import com.pokeskies.skieskits.commands.subcommands.ReloadCommand
 import com.pokeskies.skieskits.config.ConfigManager
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.command.CommandSource

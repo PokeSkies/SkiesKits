@@ -3,7 +3,6 @@ package com.pokeskies.skieskits.config
 import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.actions.ActionOptions
-import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
