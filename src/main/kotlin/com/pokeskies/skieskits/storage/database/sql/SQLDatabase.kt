@@ -20,7 +20,6 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
 
     init {
         connection = createConnection()
-        println("3 $connection")
         if (!isConnected()) {
             Utils.error("An error has occurred while connecting to the database! Please check the configuration")
         } else {
@@ -51,8 +50,6 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
     fun executeQuery(execution: String): ResultSet? {
         if (!isConnected()) return null
 
-        println("Executing Query $execution using $connection")
-
         return try {
             val statement = connection!!.createStatement()
             statement.executeQuery(execution)
@@ -65,8 +62,6 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
     fun executeUpdate(execution: String): Int {
         if (!isConnected()) return -1
 
-        println("Executing Update $execution using $connection")
-
         return try {
             val statement = connection!!.createStatement()
             statement.executeUpdate(execution)
@@ -78,8 +73,6 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
 
     fun execute(execution: String): Boolean {
         if (!isConnected()) return false
-
-        println("Executing $execution using $connection")
 
         return try {
             val statement = connection!!.createStatement()

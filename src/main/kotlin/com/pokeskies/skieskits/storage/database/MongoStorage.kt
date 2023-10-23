@@ -40,7 +40,6 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
                     builder.hosts(listOf(ServerAddress(config.host, config.port)))
                 }
                 .build()
-            println(settings)
             this.mongoClient = MongoClients.create(settings)
             this.mongoDatabase = mongoClient!!.getDatabase(config.database)
             this.userdataCollection = this.mongoDatabase!!.getCollection("userdata")
