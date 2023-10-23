@@ -14,6 +14,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.economy.EconomyType
 import com.pokeskies.skieskits.economy.IEconomyService
 import com.pokeskies.skieskits.storage.IStorage
+import com.pokeskies.skieskits.storage.StorageType
 import com.pokeskies.skieskits.utils.Utils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -42,7 +43,7 @@ class SkiesKits : ModInitializer {
         val LOGGER: Logger = LogManager.getLogger("skieskits")
     }
 
-    private lateinit var configDir: File
+    lateinit var configDir: File
     lateinit var configManager: ConfigManager
     lateinit var storage: IStorage
 
@@ -51,15 +52,18 @@ class SkiesKits : ModInitializer {
     var adventure: FabricServerAudiences? = null
     var server: MinecraftServer? = null
 
-    var gson: Gson = GsonBuilder().setPrettyPrinting().disableHtmlEscaping()
+    var gson: Gson = GsonBuilder().disableHtmlEscaping()
         .registerTypeAdapter(Action::class.java, ActionType.ActionTypeAdaptor())
         .registerTypeAdapter(Requirement::class.java, RequirementType.RequirementTypeAdaptor())
         .registerTypeAdapter(ComparisonType::class.java, ComparisonType.ComparisonTypeAdaptor())
         .registerTypeAdapter(EconomyType::class.java, EconomyType.EconomyTypeAdaptor())
+        .registerTypeAdapter(StorageType::class.java, StorageType.StorageTypeAdaptor())
         .registerTypeHierarchyAdapter(Item::class.java, Utils.RegistrySerializer(Registries.ITEM))
         .registerTypeHierarchyAdapter(SoundEvent::class.java, Utils.RegistrySerializer(Registries.SOUND_EVENT))
         .registerTypeHierarchyAdapter(NbtCompound::class.java, Utils.CodecSerializer(NbtCompound.CODEC))
         .create()
+
+    var gsonPretty: Gson = gson.newBuilder().setPrettyPrinting().create()
 
     override fun onInitialize() {
         INSTANCE = this
@@ -103,6 +107,8 @@ class SkiesKits : ModInitializer {
     }
 
     fun reload() {
+        this.storage.close()
+
         this.configManager.reload()
         this.storage = IStorage.load(configManager.config.storage)
         this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
@@ -116,12 +122,12 @@ class SkiesKits : ModInitializer {
             if (file.exists()) {
                 FileReader(file).use { reader ->
                     val jsonReader = JsonReader(reader)
-                    value = gson.fromJson(jsonReader, default::class.java)
+                    value = gsonPretty.fromJson(jsonReader, default::class.java)
                 }
             } else if (create) {
                 Files.createFile(file.toPath())
                 FileWriter(file).use { fileWriter ->
-                    fileWriter.write(gson.toJson(default))
+                    fileWriter.write(gsonPretty.toJson(default))
                     fileWriter.flush()
                 }
             }
@@ -135,7 +141,7 @@ class SkiesKits : ModInitializer {
         val file = File(configDir, filename)
         try {
             FileWriter(file).use { fileWriter ->
-                fileWriter.write(gson.toJson(`object`))
+                fileWriter.write(gsonPretty.toJson(`object`))
                 fileWriter.flush()
             }
         } catch (e: Exception) {

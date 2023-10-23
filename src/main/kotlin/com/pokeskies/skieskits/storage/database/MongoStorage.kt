@@ -31,7 +31,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         try {
             val credential = MongoCredential.createCredential(
                 config.username,
-                config.database,
+                config.username,
                 config.password.toCharArray()
             )
             val settings = MongoClientSettings.builder()
@@ -40,9 +40,10 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
                     builder.hosts(listOf(ServerAddress(config.host, config.port)))
                 }
                 .build()
+            println(settings)
             this.mongoClient = MongoClients.create(settings)
             this.mongoDatabase = mongoClient!!.getDatabase(config.database)
-            this.userdataCollection = this.mongoDatabase!!.getCollection("listings")
+            this.userdataCollection = this.mongoDatabase!!.getCollection("userdata")
         } catch (e: Exception) {
             Utils.error("Error while attempting to setup Mongo Database: $e")
         }
@@ -57,7 +58,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         val doc: Document? = userdataCollection?.find(Filters.eq("uuid", uuid.toString()))?.first()
         return if (doc != null) {
             val mapType: Type = object : TypeToken<HashMap<String, KitData>>() {}.type
-            UserData(SkiesKits.INSTANCE.gson.fromJson(doc.getString("kits"), mapType))
+            UserData(SkiesKits.INSTANCE.gsonPretty.fromJson(doc.getString("kits"), mapType))
         } else {
             UserData()
         }
@@ -74,7 +75,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
             doc = Document()
         }
         doc["uuid"] = uuid.toString()
-        doc["data"] = SkiesKits.INSTANCE.gson.toJson(userData.kits)
+        doc["kits"] = SkiesKits.INSTANCE.gsonPretty.toJson(userData.kits)
         this.userdataCollection?.replaceOne(query, doc, ReplaceOptions().upsert(true))
     }
 

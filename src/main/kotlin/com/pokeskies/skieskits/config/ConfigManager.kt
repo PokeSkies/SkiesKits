@@ -76,7 +76,7 @@ class ConfigManager(private val configDir: File) {
                         val id = fileName.substring(0, fileName.lastIndexOf(".json"))
                         val jsonReader = JsonReader(InputStreamReader(FileInputStream(file), Charsets.UTF_8))
                         try {
-                            KITS[id] = SkiesKits.INSTANCE.gson.fromJson(JsonParser.parseReader(jsonReader), Kit::class.java)
+                            KITS[id] = SkiesKits.INSTANCE.gsonPretty.fromJson(JsonParser.parseReader(jsonReader), Kit::class.java)
                             Utils.info("Successfully read and loaded the file $fileName!")
                         } catch (ex: Exception) {
                             Utils.error("Error while trying to parse the file $fileName as a GUI!")

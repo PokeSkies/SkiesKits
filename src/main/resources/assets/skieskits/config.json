@@ -2,7 +2,7 @@
   "debug": false,
   "economy": "IMPACTOR",
   "storage": {
-    "type": "JSON",
+    "type": "SQLITE",
     "host": "localhost",
     "port": 27017,
     "database":  "skieskits",
