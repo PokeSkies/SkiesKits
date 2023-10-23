@@ -35,11 +35,14 @@ class MainConfig(
         @SerializedName("kit_failed_cooldown")
         val kitFailedCooldown: String = "",
         @SerializedName("kit_failed_requirements")
-        val kitFailedRequirements: String = ""
+        val kitFailedRequirements: String = "",
+        @SerializedName("kit_no_permission")
+        val kitNoPermission: String = ""
     ) {
         override fun toString(): String {
             return "Messages(kit_not_found='$kitNotFound', kit_received='$kitReceived', kit_failed_uses='$kitFailedUses'," +
-                    " kit_failed_cooldown='$kitFailedCooldown', kit_failed_requirements='$kitFailedRequirements')"
+                    " kit_failed_cooldown='$kitFailedCooldown', kit_failed_requirements='$kitFailedRequirements'," +
+                    " kit_no_permission='$kitNoPermission')"
         }
     }
 

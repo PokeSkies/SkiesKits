@@ -46,6 +46,13 @@ class ClaimCommand : SubCommand {
                 return 1
             }
 
+            if (!kit.hasPermission(player)) {
+                player.sendMessage(Utils.deseralizeText(
+                    SkiesKits.INSTANCE.configManager.config.messages.kitNoPermission.replace("%kit_name%", kitId)
+                ))
+                return 1
+            }
+
             kit.claim(kitId, player)
 
             return 1
