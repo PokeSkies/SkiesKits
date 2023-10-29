@@ -1,5 +1,6 @@
 package com.pokeskies.skieskits.config
 
+import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.entity.ItemEntity
 import net.minecraft.item.Item
@@ -18,7 +19,7 @@ class KitItem(
     val lore: List<String> = emptyList(),
     val nbt: NbtCompound? = null
 ) {
-    fun giveItem(player: ServerPlayerEntity) {
+    fun giveItem(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         val itemStack = ItemStack(item)
 
         if (nbt != null) {
@@ -26,14 +27,16 @@ class KitItem(
         }
 
         if (name != null) {
-            itemStack.setCustomName(Utils.deseralizeText(name))
+            itemStack.setCustomName(Utils.deserializeText(Utils.parsePlaceholders(player, name, kitId, kit, kitData)))
         }
 
         if (lore.isNotEmpty()) {
             val displayNBT = itemStack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY)
             val nbtLore = NbtList()
             for (line in lore) {
-                nbtLore.add(NbtString.of(Text.Serializer.toJson(Utils.deseralizeText(line))))
+                nbtLore.add(NbtString.of(Text.Serializer.toJson(
+                    Utils.deserializeText(Utils.parsePlaceholders(player, line, kitId, kit, kitData))
+                )))
             }
             displayNBT.put(ItemStack.LORE_KEY, nbtLore)
             itemStack.setSubNbt(ItemStack.DISPLAY_KEY, displayNBT)

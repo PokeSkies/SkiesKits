@@ -32,7 +32,7 @@ class GiveCommand : SubCommand {
         fun give(ctx: CommandContext<ServerCommandSource>): Int {
             val players = EntityArgumentType.getPlayers(ctx, "player")
             if (players.isNullOrEmpty()) {
-                ctx.source.sendMessage(Utils.deseralizeText("<red>You must provide a target player!"))
+                ctx.source.sendMessage(Utils.deserializeText("<red>You must provide a target player!"))
                 return 1
             }
 
@@ -40,7 +40,7 @@ class GiveCommand : SubCommand {
 
             val kit = ConfigManager.KITS[kitId]
             if (kit == null) {
-                ctx.source.sendMessage(Utils.deseralizeText(
+                ctx.source.sendMessage(Utils.deserializeText(
                     SkiesKits.INSTANCE.configManager.config.messages.kitNotFound.replace("%kit_name%", kitId)
                 ))
                 return 1

@@ -21,7 +21,7 @@ class SQLiteProvider(config: MainConfig.Storage) : SQLDatabase(config) {
         try {
             return DriverManager.getConnection(getConnectionURL())
         } catch (e: SQLException) {
-            Utils.error(e.message)
+            Utils.printError(e.message)
         }
         return null
     }

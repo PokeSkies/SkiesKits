@@ -11,20 +11,22 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 class CommandPlayer(
     type: ActionType = ActionType.COMMAND_PLAYER,
+    delay: Long = 0,
+    chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
     private val commands: List<String> = emptyList()
-) : Action(type, requirements) {
-    override fun execute(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
-        Utils.debug("Attempting to execute a ${type.identifier} Action: $this")
+) : Action(type, delay, chance, requirements) {
+    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+        Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (SkiesKits.INSTANCE.server?.commandManager == null) {
-            Utils.error("There was an error while executing an action for player ${player.name}: Server was somehow null on command execution?")
+            Utils.printError("There was an error while executing an action for player ${player.name}: Server was somehow null on command execution?")
             return
         }
 
         for (command in commands) {
             SkiesKits.INSTANCE.server?.commandManager?.executeWithPrefix(
                 player.commandSource,
-                parsePlaceholders(player, command, kitId, kit, kitData)
+                Utils.parsePlaceholders(player, command, kitId, kit, kitData)
             )
         }
     }

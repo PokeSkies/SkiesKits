@@ -28,13 +28,13 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
         }
 
         if (database == null) {
-            Utils.error("The database returned null while initializing! Please check the storage configuration options.")
+            Utils.printError("The database returned null while initializing! Please check the storage configuration options.")
         }
     }
 
     override fun getUser(uuid: UUID): UserData {
         if (database == null) {
-            Utils.error("The database connection was not completed! Please check the storage configuration options.")
+            Utils.printError("The database connection was not completed! Please check the storage configuration options.")
             return UserData()
         }
 
@@ -52,7 +52,7 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
 
     override fun saveUser(uuid: UUID, userData: UserData) {
         if (database == null) {
-            Utils.error("The database connection was not completed! Please check the storage configuration options.")
+            Utils.printError("The database connection was not completed! Please check the storage configuration options.")
             return
         }
 

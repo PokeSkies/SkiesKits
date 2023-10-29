@@ -12,15 +12,17 @@ import net.minecraft.sound.SoundEvent
 
 class PlaySound(
     type: ActionType = ActionType.PLAYSOUND,
+    delay: Long = 0,
+    chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
     private val sound: SoundEvent? = null,
     private val volume: Float = 1.0F,
     private val pitch: Float = 1.0F
-) : Action(type, requirements) {
-    override fun execute(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
-        Utils.debug("Attempting to execute a ${type.identifier} Action: $this")
+) : Action(type, delay, chance, requirements) {
+    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+        Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (sound == null) {
-            Utils.error("There was an error while executing a Sound Action for player ${player.name}: Sound was somehow null?")
+            Utils.printError("There was an error while executing a Sound Action for player ${player.name}: Sound was somehow null?")
             return
         }
         player.playSound(sound, SoundCategory.MASTER, volume, pitch)

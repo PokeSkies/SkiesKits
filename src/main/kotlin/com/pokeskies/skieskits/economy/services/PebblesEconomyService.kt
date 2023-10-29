@@ -5,9 +5,9 @@ import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.server.network.ServerPlayerEntity
 import tech.sethi.pebbleseconomy.PebblesEconomyInitializer
 
-class PebblesService : IEconomyService {
+class PebblesEconomyService : IEconomyService {
     init {
-        Utils.info("Pebbles Economy Service has been found and loaded for any Currency actions/requirements!")
+        Utils.printInfo("Pebbles Economy Service has been found and loaded for any Currency actions/requirements!")
     }
 
     override fun balance(player: ServerPlayerEntity, currency: String) : Double {

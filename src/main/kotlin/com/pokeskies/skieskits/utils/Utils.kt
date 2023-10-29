@@ -5,8 +5,11 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.pokeskies.skieskits.SkiesKits
+import com.pokeskies.skieskits.config.Kit
+import com.pokeskies.skieskits.data.KitData
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.registry.Registry
+import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.util.Identifier
 import java.lang.reflect.Type
@@ -16,20 +19,24 @@ import java.util.function.Function
 object Utils {
     val miniMessage: MiniMessage = MiniMessage.miniMessage()
 
-    fun deseralizeText(text: String): Text {
+    fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String, kit: Kit, kitData: KitData): String {
+        return SkiesKits.INSTANCE.placeholderManager.parse(player, text, kitId, kit, kitData)
+    }
+
+    fun deserializeText(text: String): Text {
         return SkiesKits.INSTANCE.adventure!!.toNative(miniMessage.deserialize(text))
     }
 
-    fun debug(message: String?, bypassCheck: Boolean = false) {
+    fun printDebug(message: String?, bypassCheck: Boolean = false) {
         if (bypassCheck || SkiesKits.INSTANCE.configManager.config.debug)
             SkiesKits.LOGGER.info("[SkiesKits] DEBUG: $message")
     }
 
-    fun error(message: String?) {
+    fun printError(message: String?) {
         SkiesKits.LOGGER.error("[SkiesKits] ERROR: $message")
     }
 
-    fun info(message: String?) {
+    fun printInfo(message: String?) {
         SkiesKits.LOGGER.info("[SkiesKits] $message")
     }
 
@@ -61,7 +68,7 @@ object Utils {
         override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): T? {
             var parsed = if (json.isJsonPrimitive) registry.get(Identifier.tryParse(json.asString)) else null
             if (parsed == null)
-                error("There was an error while deserializing a Registry Type: $registry")
+                printError("There was an error while deserializing a Registry Type: $registry")
             return parsed
         }
         override fun serialize(src: T, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
@@ -75,7 +82,7 @@ object Utils {
             return try {
                 codec.decode(JsonOps.INSTANCE, json).getOrThrow(false) { }.first
             } catch (e: Throwable) {
-                error("There was an error while deserializing a Codec: $codec")
+                printError("There was an error while deserializing a Codec: $codec")
                 null
             }
         }
@@ -87,7 +94,7 @@ object Utils {
                 else
                     JsonNull.INSTANCE
             } catch (e: Throwable) {
-                error("There was an error while serializing a Codec: $codec")
+                printError("There was an error while serializing a Codec: $codec")
                 JsonNull.INSTANCE
             }
         }

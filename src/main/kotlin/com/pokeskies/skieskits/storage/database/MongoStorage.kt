@@ -44,14 +44,14 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
             this.mongoDatabase = mongoClient!!.getDatabase(config.database)
             this.userdataCollection = this.mongoDatabase!!.getCollection("userdata")
         } catch (e: Exception) {
-            Utils.error("Error while attempting to setup Mongo Database: $e")
+            Utils.printError("Error while attempting to setup Mongo Database: $e")
         }
 
     }
 
     override fun getUser(uuid: UUID): UserData {
         if (mongoDatabase == null) {
-            Utils.error("There was an error while attempting to fetch data from the Mongo database!")
+            Utils.printError("There was an error while attempting to fetch data from the Mongo database!")
             return UserData()
         }
         val doc: Document? = userdataCollection?.find(Filters.eq("uuid", uuid.toString()))?.first()
@@ -65,7 +65,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
 
     override fun saveUser(uuid: UUID, userData: UserData) {
         if (mongoDatabase == null) {
-            Utils.error("There was an error while attempting to save data to the Mongo database!")
+            Utils.printError("There was an error while attempting to save data to the Mongo database!")
             return
         }
         val query = Filters.eq("uuid", uuid.toString())

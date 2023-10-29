@@ -21,7 +21,7 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
     init {
         connection = createConnection()
         if (!isConnected()) {
-            Utils.error("An error has occurred while connecting to the database! Please check the configuration")
+            Utils.printError("An error has occurred while connecting to the database! Please check the configuration")
         } else {
             execute(USERDATA_INITIALIZE)
         }
@@ -43,7 +43,7 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
         try {
             if (isConnected()) connection!!.close()
         } catch (e: SQLException) {
-            Utils.error("Error while shutting down database connection!")
+            Utils.printError("Error while shutting down database connection!")
         }
     }
 
@@ -54,7 +54,7 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
             val statement = connection!!.createStatement()
             statement.executeQuery(execution)
         } catch (e: SQLException) {
-            Utils.error("There was an error executing query statement: ${e.printStackTrace()}")
+            Utils.printError("There was an error executing query statement: ${e.printStackTrace()}")
             null
         }
     }
@@ -66,7 +66,7 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
             val statement = connection!!.createStatement()
             statement.executeUpdate(execution)
         } catch (e: SQLException) {
-            Utils.error("There was an error executing update statement: ${e.printStackTrace()}")
+            Utils.printError("There was an error executing update statement: ${e.printStackTrace()}")
             -1
         }
     }
@@ -80,7 +80,7 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
             statement.close()
             true
         } catch (e: SQLException) {
-            Utils.error("There was an error executing statement: ${e.printStackTrace()}")
+            Utils.printError("There was an error executing statement: ${e.printStackTrace()}")
             false
         }
     }

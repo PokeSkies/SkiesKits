@@ -32,7 +32,7 @@ class Kit(
             if (!kitData.checkUsage(maxUses)) {
                 actions.executeUsesActions(player, kitId, this, kitData)
                 if (notifications) {
-                    player.sendMessage(Utils.deseralizeText(
+                    player.sendMessage(Utils.deserializeText(
                         SkiesKits.INSTANCE.configManager.config.messages.kitFailedUses
                             .replace("%kit_name%", getDisplayName(kitId))
                             .replace("%kit_uses%", kitData.uses.toString())
@@ -46,7 +46,7 @@ class Kit(
                 actions.executeCooldownActions(player, kitId, this, kitData)
                 if (notifications) {
                     player.sendMessage(
-                        Utils.deseralizeText(
+                        Utils.deserializeText(
                             SkiesKits.INSTANCE.configManager.config.messages.kitFailedCooldown
                                 .replace("%kit_name%", getDisplayName(kitId))
                                 .replace("%kit_cooldown%", Utils.getFormattedTime(kitData.getTimeRemaining(cooldown)))
@@ -60,7 +60,7 @@ class Kit(
         if (!bypassRequirements) {
             var success = true
             for ((id, requirement) in requirements.requirements) {
-                if (requirement.check(player)) {
+                if (requirement.checkRequirements(player, kitId, this, kitData)) {
                     requirement.executeSuccessActions(player, kitId, this, kitData)
                 } else {
                     success = false
@@ -73,7 +73,7 @@ class Kit(
                 actions.executeRequirementsActions(player, kitId, this, kitData)
                 if (notifications) {
                     player.sendMessage(
-                        Utils.deseralizeText(
+                        Utils.deserializeText(
                             SkiesKits.INSTANCE.configManager.config.messages.kitFailedRequirements
                                 .replace("%kit_name%", getDisplayName(kitId))
                         )
@@ -86,7 +86,7 @@ class Kit(
         }
 
         for (item in items) {
-            item.giveItem(player)
+            item.giveItem(player, kitId, this, kitData)
         }
 
         kitData.uses += 1
@@ -99,7 +99,7 @@ class Kit(
 
         if (notifications) {
             player.sendMessage(
-                Utils.deseralizeText(
+                Utils.deserializeText(
                     SkiesKits.INSTANCE.configManager.config.messages.kitReceived
                         .replace("%kit_name%", getDisplayName(kitId))
                 )

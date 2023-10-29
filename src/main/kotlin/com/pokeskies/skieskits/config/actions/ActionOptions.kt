@@ -18,8 +18,8 @@ class ActionOptions(
 ) {
     fun executeClaimedActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in claimed) {
-            if (action.checkRequirements(player)) {
-                action.execute(player, kitId, kit, kitData)
+            if (action.checkRequirements(player, kitId, kit, kitData)) {
+                action.attemptExecution(player, kitId, kit, kitData)
                 action.executeSuccessActions(player, kitId, kit, kitData)
             } else {
                 action.executeDenyActions(player, kitId, kit, kitData)
@@ -29,8 +29,8 @@ class ActionOptions(
 
     fun executeCooldownActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in onCooldown) {
-            if (action.checkRequirements(player)) {
-                action.execute(player, kitId, kit, kitData)
+            if (action.checkRequirements(player, kitId, kit, kitData)) {
+                action.attemptExecution(player, kitId, kit, kitData)
                 action.executeSuccessActions(player, kitId, kit, kitData)
             } else {
                 action.executeDenyActions(player, kitId, kit, kitData)
@@ -40,8 +40,8 @@ class ActionOptions(
 
     fun executePermissionActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in noPermission) {
-            if (action.checkRequirements(player)) {
-                action.execute(player, kitId, kit, kitData)
+            if (action.checkRequirements(player, kitId, kit, kitData)) {
+                action.attemptExecution(player, kitId, kit, kitData)
                 action.executeSuccessActions(player, kitId, kit, kitData)
             } else {
                 action.executeDenyActions(player, kitId, kit, kitData)
@@ -51,8 +51,8 @@ class ActionOptions(
 
     fun executeUsesActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in maxUses) {
-            if (action.checkRequirements(player)) {
-                action.execute(player, kitId, kit, kitData)
+            if (action.checkRequirements(player, kitId, kit, kitData)) {
+                action.attemptExecution(player, kitId, kit, kitData)
                 action.executeSuccessActions(player, kitId, kit, kitData)
             } else {
                 action.executeDenyActions(player, kitId, kit, kitData)
@@ -62,8 +62,8 @@ class ActionOptions(
 
     fun executeRequirementsActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in failedRequirements) {
-            if (action.checkRequirements(player)) {
-                action.execute(player, kitId, kit, kitData)
+            if (action.checkRequirements(player, kitId, kit, kitData)) {
+                action.attemptExecution(player, kitId, kit, kitData)
                 action.executeSuccessActions(player, kitId, kit, kitData)
             } else {
                 action.executeDenyActions(player, kitId, kit, kitData)

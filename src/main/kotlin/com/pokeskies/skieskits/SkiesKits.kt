@@ -13,6 +13,7 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.economy.EconomyType
 import com.pokeskies.skieskits.economy.IEconomyService
+import com.pokeskies.skieskits.placeholders.PlaceholderManager
 import com.pokeskies.skieskits.storage.IStorage
 import com.pokeskies.skieskits.storage.StorageType
 import com.pokeskies.skieskits.utils.Utils
@@ -31,6 +32,7 @@ import net.minecraft.server.MinecraftServer
 import net.minecraft.sound.SoundEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.graalvm.polyglot.Engine
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
@@ -48,9 +50,12 @@ class SkiesKits : ModInitializer {
     lateinit var storage: IStorage
 
     var economyService: IEconomyService? = null
+    lateinit var placeholderManager: PlaceholderManager
 
     var adventure: FabricServerAudiences? = null
     var server: MinecraftServer? = null
+
+    lateinit var graalEngine: Engine
 
     var gson: Gson = GsonBuilder().disableHtmlEscaping()
         .registerTypeAdapter(Action::class.java, ActionType.ActionTypeAdaptor())
@@ -73,6 +78,11 @@ class SkiesKits : ModInitializer {
         this.storage = IStorage.load(configManager.config.storage)
 
         this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
+        this.placeholderManager = PlaceholderManager()
+
+        this.graalEngine = Engine.newBuilder()
+            .option("engine.WarnInterpreterOnly", "false")
+            .build()
 
         ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer? ->
             this.adventure = FabricServerAudiences.of(

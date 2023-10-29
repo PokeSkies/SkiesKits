@@ -1,8 +1,11 @@
-package com.pokeskies.skieskits.config.requirements.types
+package com.pokeskies.skieskits.config.requirements.types.internal
 
+import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.requirements.ComparisonType
 import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
+import com.pokeskies.skieskits.data.KitData
+import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.item.Item
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
@@ -15,8 +18,9 @@ class ItemRequirement(
     val item: Item = Items.BARRIER,
     val amount: Int? = null,
     val nbt: NbtCompound? = null,
+    val strict: Boolean = true
 ) : Requirement(type, comparison) {
-    override fun check(player: ServerPlayerEntity): Boolean {
+    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 
@@ -30,6 +34,8 @@ class ItemRequirement(
                 }
             }
         }
+
+        Utils.printDebug("Checking a ${type?.identifier} Requirement with items found='$amountFound': $this")
 
         return when (comparison) {
             ComparisonType.EQUALS -> {
@@ -58,7 +64,7 @@ class ItemRequirement(
             return false
         }
 
-        if (nbt != null) {
+        if (strict && nbt != null) {
             val checkNBT = checkItem.nbt ?: return false
 
             if (checkNBT != nbt)
@@ -68,11 +74,11 @@ class ItemRequirement(
         return true
     }
 
-    override fun getAllowedComparisons(): List<ComparisonType> {
+    override fun allowedComparisons(): List<ComparisonType> {
         return ComparisonType.values().toList()
     }
 
     override fun toString(): String {
-        return "ItemRequirement(item=$item, amount=$amount, nbt=$nbt)"
+        return "ItemRequirement(comparison=$comparison, item=$item, amount=$amount, nbt=$nbt, strict=$strict)"
     }
 }

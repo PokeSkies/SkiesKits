@@ -32,7 +32,7 @@ class ClaimCommand : SubCommand {
         fun claim(ctx: CommandContext<ServerCommandSource>): Int {
             val player = ctx.source.player
             if (player == null) {
-                ctx.source.sendMessage(Utils.deseralizeText("<red>You must be a player to use this command!"))
+                ctx.source.sendMessage(Utils.deserializeText("<red>You must be a player to use this command!"))
                 return 1
             }
 
@@ -40,14 +40,14 @@ class ClaimCommand : SubCommand {
 
             val kit = ConfigManager.KITS[kitId]
             if (kit == null) {
-                player.sendMessage(Utils.deseralizeText(
+                player.sendMessage(Utils.deserializeText(
                     SkiesKits.INSTANCE.configManager.config.messages.kitNotFound.replace("%kit_name%", kitId)
                 ))
                 return 1
             }
 
             if (!kit.hasPermission(player)) {
-                player.sendMessage(Utils.deseralizeText(
+                player.sendMessage(Utils.deserializeText(
                     SkiesKits.INSTANCE.configManager.config.messages.kitNoPermission.replace("%kit_name%", kitId)
                 ))
                 return 1

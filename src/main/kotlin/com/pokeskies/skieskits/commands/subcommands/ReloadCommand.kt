@@ -20,7 +20,7 @@ class ReloadCommand : SubCommand {
     companion object {
         fun reload(ctx: CommandContext<ServerCommandSource>): Int {
             SkiesKits.INSTANCE.reload()
-            ctx.source.sendMessage(Utils.deseralizeText("<green>Reloaded SkiesKits"))
+            ctx.source.sendMessage(Utils.deserializeText("<green>Reloaded SkiesKits"))
             return 1
         }
     }

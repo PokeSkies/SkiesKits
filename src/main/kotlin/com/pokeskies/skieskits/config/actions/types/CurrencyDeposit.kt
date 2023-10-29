@@ -11,16 +11,18 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 class CurrencyDeposit(
     type: ActionType = ActionType.CURRENCY_DEPOSIT,
+    delay: Long = 0,
+    chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
     private val currency: String = "",
     private val amount: Double = 0.0
-) : Action(type, requirements) {
-    override fun execute(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
-        Utils.debug("Attempting to execute a ${type.identifier} Action: $this")
+) : Action(type, delay, chance, requirements) {
+    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+        Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
 
         val service = SkiesKits.INSTANCE.economyService
         if (service == null) {
-            Utils.error("Currency Deposit Action was executed but no valid Economy Service could be found.")
+            Utils.printError("Currency Deposit Action was executed but no valid Economy Service could be found.")
             return
         }
 

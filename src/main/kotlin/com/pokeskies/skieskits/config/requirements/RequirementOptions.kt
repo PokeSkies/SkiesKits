@@ -15,13 +15,13 @@ class RequirementOptions(
 ) {
     fun executeDenyActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in denyActions) {
-            action.execute(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData)
         }
     }
 
     fun executeSuccessActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in successActions) {
-            action.execute(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData)
         }
     }
 

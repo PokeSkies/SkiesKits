@@ -11,19 +11,21 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 class MessageBroadcast(
     type: ActionType = ActionType.BROADCAST,
+    delay: Long = 0,
+    chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
     private val message: List<String> = emptyList()
-) : Action(type, requirements) {
-    override fun execute(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
-        Utils.debug("Attempting to execute a ${type.identifier} Action: $this")
+) : Action(type, delay, chance, requirements) {
+    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+        Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (SkiesKits.INSTANCE.adventure == null) {
-            Utils.error("There was an error while executing an action for player ${player.name}: Adventure was somehow null on message broadcast?")
+            Utils.printError("There was an error while executing an action for player ${player.name}: Adventure was somehow null on message broadcast?")
             return
         }
 
         for (line in message) {
-            SkiesKits.INSTANCE.adventure!!.all().sendMessage(Utils.deseralizeText(
-                parsePlaceholders(player, line, kitId, kit, kitData)
+            SkiesKits.INSTANCE.adventure!!.all().sendMessage(Utils.deserializeText(
+                Utils.parsePlaceholders(player, line, kitId, kit, kitData)
             ))
         }
     }

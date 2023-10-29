@@ -15,19 +15,15 @@ abstract class Requirement(
     @SerializedName("success_actions")
     val successActions: Map<String, Action> = emptyMap()
 ) {
-    abstract fun check(player: ServerPlayerEntity): Boolean
+    abstract fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean
 
-    open fun getAllowedComparisons(): List<ComparisonType> {
+    open fun allowedComparisons(): List<ComparisonType> {
         return emptyList()
     }
 
-    fun parsePlaceholders(player: ServerPlayerEntity, value: String): String {
-        return value.replace("%player%", player.name.string)
-    }
-
     fun checkComparison(): Boolean {
-        if (!getAllowedComparisons().contains(comparison)) {
-            Utils.error("Error while executing a Requirement check! Comparison ${comparison.identifier} is not allowed: ${getAllowedComparisons().map { it.identifier }}")
+        if (!allowedComparisons().contains(comparison)) {
+            Utils.printError("Error while executing a Requirement check! Comparison ${comparison.identifier} is not allowed: ${allowedComparisons().map { it.identifier }}")
             return false
         }
         return true
@@ -35,13 +31,13 @@ abstract class Requirement(
 
     fun executeSuccessActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in successActions) {
-            action.execute(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData)
         }
     }
 
     fun executeDenyActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in denyActions) {
-            action.execute(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData)
         }
     }
 

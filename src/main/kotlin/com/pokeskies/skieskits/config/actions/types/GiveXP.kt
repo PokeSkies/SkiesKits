@@ -10,12 +10,14 @@ import net.minecraft.server.network.ServerPlayerEntity
 
 class GiveXP(
     type: ActionType = ActionType.GIVE_XP,
+    delay: Long = 0,
+    chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
     private val amount: Int = 0,
     private val level: Boolean = false
-) : Action(type, requirements) {
-    override fun execute(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
-        Utils.debug("Attempting to execute a ${type.identifier} Action: $this")
+) : Action(type, delay, chance, requirements) {
+    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+        Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (level) {
             player.addExperienceLevels(amount)
         } else {
