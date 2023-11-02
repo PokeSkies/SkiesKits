@@ -22,8 +22,8 @@ More information on configuration can be found on the [Wiki](https://github.com/
 3. Download any optional dependencies:
    - [Impactor](https://modrinth.com/mod/impactor) **_(Economy, Placeholders)_**
    - Pebbles Economy **_(Economy)_**
-   - [PlaceholderAPI]() **_(Placeholders)_**
-   - [Plan]() **_(Additional Requirements)_**
+   - [PlaceholderAPI](https://modrinth.com/mod/placeholder-api) **_(Placeholders)_**
+   - [Plan](https://www.curseforge.com/minecraft/mc-mods/plan-player-analytics) **_(Additional Requirements)_**
 4. Install the mod and dependencies into your server's `mods` folder.
 5. Configure your Kits in the `./config/skieskits/kits/` folder.
 
