@@ -57,7 +57,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         val doc: Document? = userdataCollection?.find(Filters.eq("uuid", uuid.toString()))?.first()
         return if (doc != null) {
             val mapType: Type = object : TypeToken<HashMap<String, KitData>>() {}.type
-            UserData(SkiesKits.INSTANCE.gsonPretty.fromJson(doc.getString("kits"), mapType))
+            UserData(SkiesKits.INSTANCE.gson.fromJson(doc.getString("kits"), mapType))
         } else {
             UserData()
         }
@@ -74,7 +74,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
             doc = Document()
         }
         doc["uuid"] = uuid.toString()
-        doc["kits"] = SkiesKits.INSTANCE.gsonPretty.toJson(userData.kits)
+        doc["kits"] = SkiesKits.INSTANCE.gson.toJson(userData.kits)
         this.userdataCollection?.replaceOne(query, doc, ReplaceOptions().upsert(true))
     }
 

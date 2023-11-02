@@ -1,5 +1,6 @@
 package com.pokeskies.skieskits.commands.subcommands
 
+import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
@@ -22,7 +23,10 @@ class GiveCommand : SubCommand {
                         CommandSource.suggestMatching(ConfigManager.KITS.keys.stream(), builder)
                     }
                     .then(CommandManager.argument("player", EntityArgumentType.players())
-                        .executes(GiveCommand::give)
+                        .then(CommandManager.argument("bypass", BoolArgumentType.bool())
+                            .executes(Companion::give)
+                        )
+                        .executes(Companion::give)
                     )
                 )
                 .build()
@@ -36,6 +40,9 @@ class GiveCommand : SubCommand {
                 return 1
             }
 
+            var bypass = false
+            try { bypass = BoolArgumentType.getBool(ctx, "bypass") } catch (_: Exception) { }
+
             val kitId = StringArgumentType.getString(ctx, "kit")
 
             val kit = ConfigManager.KITS[kitId]
@@ -47,7 +54,7 @@ class GiveCommand : SubCommand {
             }
 
             for (player in players) {
-                kit.claim(kitId, player)
+                kit.claim(kitId, player, bypass, bypass)
             }
 
             return 1

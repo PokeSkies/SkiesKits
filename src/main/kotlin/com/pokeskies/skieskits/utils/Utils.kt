@@ -19,7 +19,7 @@ import java.util.function.Function
 object Utils {
     val miniMessage: MiniMessage = MiniMessage.miniMessage()
 
-    fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String, kit: Kit, kitData: KitData): String {
+    fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
         return SkiesKits.INSTANCE.placeholderManager.parse(player, text, kitId, kit, kitData)
     }
 
@@ -41,7 +41,7 @@ object Utils {
     }
 
     fun getFormattedTime(time: Long): String {
-        if (time <= 0) return "1s"
+        if (time <= 0) return "0s"
         val timeFormatted: MutableList<String> = ArrayList()
         val days = time / 86400
         val hours = time % 86400 / 3600

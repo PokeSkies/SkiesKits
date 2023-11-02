@@ -14,7 +14,7 @@ class DebugCommand : SubCommand {
     override fun build(): LiteralCommandNode<ServerCommandSource> {
         return CommandManager.literal("debug")
             .requires(Permissions.require("skieskits.command.debug", 4))
-            .executes(DebugCommand::debug)
+            .executes(Companion::debug)
             .build()
     }
 

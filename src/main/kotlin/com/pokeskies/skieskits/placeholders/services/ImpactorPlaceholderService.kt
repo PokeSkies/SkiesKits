@@ -1,9 +1,9 @@
-package com.pokeskies.skiesguis.placeholders.services
+package com.pokeskies.skieskits.placeholders.services
 
 import com.pokeskies.skieskits.SkiesKits
-import com.pokeskies.skieskits.placeholders.IPlaceholderService
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
+import com.pokeskies.skieskits.placeholders.IPlaceholderService
 import com.pokeskies.skieskits.utils.Utils
 import net.impactdev.impactor.api.platform.players.PlatformPlayer
 import net.impactdev.impactor.api.platform.sources.PlatformSource
@@ -30,7 +30,7 @@ class ImpactorPlaceholderService : IPlaceholderService {
         Utils.printInfo("Impactor mod found! Enabling placeholder integration...")
     }
 
-    override fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String, kit: Kit, kitData: KitData): String {
+    override fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
         val platformPlayer = PlatformPlayer.getOrCreate(player.uuid)
         return SkiesKits.INSTANCE.adventure!!.toNative(
             processor.parse(platformPlayer, text, Context().append(PlatformSource::class.java, platformPlayer))

@@ -23,7 +23,7 @@ class ClaimCommand : SubCommand {
                     }.keys, builder)
                 }
                 .requires { obj: ServerCommandSource -> obj.isExecutedByPlayer }
-                .executes(ClaimCommand::claim)
+                .executes(Companion::claim)
             )
             .build()
     }

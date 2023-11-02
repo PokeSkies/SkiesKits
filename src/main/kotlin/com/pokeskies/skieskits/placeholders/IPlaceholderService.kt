@@ -5,5 +5,5 @@ import com.pokeskies.skieskits.data.KitData
 import net.minecraft.server.network.ServerPlayerEntity
 
 interface IPlaceholderService {
-    fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String, kit: Kit, kitData: KitData): String
+    fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String
 }

@@ -13,7 +13,7 @@ class ReloadCommand : SubCommand {
     override fun build(): LiteralCommandNode<ServerCommandSource> {
         return CommandManager.literal("reload")
             .requires(Permissions.require("skieskits.command.reload", 4))
-            .executes(ReloadCommand::reload)
+            .executes(Companion::reload)
             .build()
     }
 

@@ -17,6 +17,7 @@ import java.nio.file.StandardCopyOption
 
 class ConfigManager(private val configDir: File) {
     lateinit var config: MainConfig
+    lateinit var menuConfig: KitMenuConfig
 
     companion object {
         var KITS: BiMap<String, Kit> = HashBiMap.create()
@@ -29,6 +30,7 @@ class ConfigManager(private val configDir: File) {
     fun reload() {
         copyDefaults()
         config = SkiesKits.INSTANCE.loadFile("config.json", MainConfig())
+        menuConfig = SkiesKits.INSTANCE.loadFile("menu.json", KitMenuConfig())
         loadKits()
     }
 
@@ -45,6 +47,17 @@ class ConfigManager(private val configDir: File) {
                 Files.copy(inputStream, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
             } catch (e: Exception) {
                 Utils.printError("Failed to copy the default config file: $e - ${e.message}")
+            }
+        }
+
+        // Menu Config
+        val menuFile = configDir.resolve("menu.json")
+        if (!menuFile.exists()) {
+            try {
+                val inputStream: InputStream = classLoader.getResourceAsStream("assets/skieskits/menu.json")
+                Files.copy(inputStream, menuFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            } catch (e: Exception) {
+                Utils.printError("Failed to copy the default menu file: $e - ${e.message}")
             }
         }
 
