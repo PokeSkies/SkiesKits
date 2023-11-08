@@ -68,6 +68,8 @@ dependencies {
     implementation(include("org.mongodb:bson:4.11.0")!!)
     implementation(include("org.mariadb.jdbc:mariadb-java-client:3.1.0")!!)
 
+    implementation(include("org.xerial:sqlite-jdbc:3.43.2.2")!!)
+
     modImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
