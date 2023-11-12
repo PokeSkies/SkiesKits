@@ -22,6 +22,7 @@ More information on configuration can be found on the [Wiki](https://github.com/
 3. Download any optional dependencies:
    - [Impactor](https://modrinth.com/mod/impactor) **_(Economy, Placeholders)_**
    - Pebbles Economy **_(Economy)_**
+   - [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) **_(Placeholders)_**
    - [PlaceholderAPI](https://modrinth.com/mod/placeholder-api) **_(Placeholders)_**
    - [Plan](https://www.curseforge.com/minecraft/mc-mods/plan-player-analytics) **_(Additional Requirements)_**
 4. Install the mod and dependencies into your server's `mods` folder.
@@ -43,4 +44,7 @@ More information on configuration can be found on the [Wiki](https://github.com/
 - Better/more debugging and error handling
 - In-game kit editing (via commands and GUI editor)
 
-**If you have any suggestions, feel free to message me on Discord (@stampede2011)**
+## Support
+A community support Discord has been opened up for all Skies Development related projects! Feel free to join and ask questions or leave suggestions :)
+
+<a class="discord-widget" href="https://discord.gg/cgBww275Fg" title="Join us on Discord"><img src="https://discordapp.com/api/guilds/1158447623989116980/embed.png?style=banner2"></a>
