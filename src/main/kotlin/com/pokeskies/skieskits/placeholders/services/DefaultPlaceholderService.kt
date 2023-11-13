@@ -16,7 +16,7 @@ class DefaultPlaceholderService : IPlaceholderService {
                 .replace("%kit_name%", kit.getDisplayName(kitId))
                 .replace("%kit_uses%", kitData.uses.toString())
                 .replace("%kit_max_uses%", kit.maxUses.toString())
-                .replace("%kit_cooldown%", Utils.getFormattedTime(kit.cooldown.toLong()))
+                .replace("%kit_cooldown%", Utils.getFormattedTime(kit.cooldown))
                 .replace("%kit_time_remaining%", Utils.getFormattedTime(kitData.getTimeRemaining(kit.cooldown)))
         }
 

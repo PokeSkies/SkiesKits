@@ -8,11 +8,11 @@ class KitData(
         return maxUses !in 1..uses
     }
 
-    fun checkCooldown(cooldown: Int): Boolean {
+    fun checkCooldown(cooldown: Long): Boolean {
         return !(cooldown > 0 && System.currentTimeMillis() < (lastUse + (cooldown * 1000)))
     }
 
-    fun getTimeRemaining(cooldown: Int): Long {
+    fun getTimeRemaining(cooldown: Long): Long {
         return if (cooldown > 0) ((lastUse + (cooldown * 1000)) - System.currentTimeMillis()) / 1000 else 0
     }
 

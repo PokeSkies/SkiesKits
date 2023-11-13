@@ -13,7 +13,7 @@ class Kit(
     @SerializedName("display_name")
     val displayName: String? = null,
     val permission: String? = null,
-    val cooldown: Int = -1,
+    val cooldown: Long = -1,
     @SerializedName("max_uses")
     val maxUses: Int = -1,
     @SerializedName("on_join")
