@@ -43,6 +43,7 @@ More information on configuration can be found on the [Wiki](https://github.com/
 ## Planned Features
 - Better/more debugging and error handling
 - In-game kit editing (via commands and GUI editor)
+- Storage Migration
 
 ## Support
 A community support Discord has been opened up for all Skies Development related projects! Feel free to join and ask questions or leave suggestions :)
