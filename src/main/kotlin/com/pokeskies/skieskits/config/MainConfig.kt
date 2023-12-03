@@ -17,11 +17,26 @@ class MainConfig(
         val port: Int = 3306,
         val database: String = "skieskits",
         val username: String = "root",
-        val password: String = ""
+        val password: String = "",
+        val properties: Map<String, String> = mapOf("useUnicode" to "true", "characterEncoding" to "utf8"),
+        val poolSettings: StoragePoolSettings = StoragePoolSettings()
     ) {
         override fun toString(): String {
             return "Storage(type=$type, host='$host', port=$port," +
                     " database='$database', username='$username', password='$password')"
+        }
+    }
+
+    class StoragePoolSettings(val maximumPoolSize: Int = 10,
+                              val minimumIdle: Int = 10,
+                              val keepaliveTime: Long = 0,
+                              val connectionTimeout: Long = 30000,
+                              val idleTimeout: Long = 600000,
+                              val maxLifetime: Long = 1800000) {
+        override fun toString(): String {
+            return "StoragePoolSettings(maximumPoolSize=$maximumPoolSize, minimumIdle=$minimumIdle," +
+                    " keepaliveTime=$keepaliveTime, connectionTimeout=$connectionTimeout," +
+                    " idleTimeout=$idleTimeout, maxLifetime=$maxLifetime)"
         }
     }
 
