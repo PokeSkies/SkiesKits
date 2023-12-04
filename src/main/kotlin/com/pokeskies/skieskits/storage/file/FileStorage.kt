@@ -17,8 +17,12 @@ class FileStorage : IStorage {
         return userData ?: UserData()
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData) {
+    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
         fileData.userdata[uuid] = userData
-        SkiesKits.INSTANCE.saveFile(STORAGE_FILENAME, fileData)
+        return SkiesKits.INSTANCE.saveFile(STORAGE_FILENAME, fileData)
+    }
+
+    override fun isConnected(): Boolean {
+        return true
     }
 }

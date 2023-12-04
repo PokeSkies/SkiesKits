@@ -2,6 +2,7 @@ package com.pokeskies.skieskits.storage.database.sql
 
 import com.pokeskies.skieskits.config.MainConfig
 import com.pokeskies.skieskits.utils.Utils
+import java.io.IOException
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -21,7 +22,7 @@ abstract class SQLDatabase(val config: MainConfig.Storage) {
     init {
         connection = createConnection()
         if (!isConnected()) {
-            Utils.printError("An error has occurred while connecting to the database! Please check the configuration")
+            throw IOException("An error has occurred while connecting to the database! Please check the configuration")
         } else {
             execute(USERDATA_INITIALIZE)
         }

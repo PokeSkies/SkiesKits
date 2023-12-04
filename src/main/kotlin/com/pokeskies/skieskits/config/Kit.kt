@@ -24,7 +24,17 @@ class Kit(
     val actions: ActionOptions = ActionOptions(),
 ) {
     fun claim(kitId: String, player: ServerPlayerEntity, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
-        val userdata = SkiesKits.INSTANCE.storage.getUser(player.uuid)
+        if (SkiesKits.INSTANCE.storage == null || !SkiesKits.INSTANCE.storage!!.isConnected()) {
+            player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+            return
+        }
+
+        val userdata = SkiesKits.INSTANCE.storage?.getUser(player.uuid)
+
+        if (userdata == null) {
+            player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+            return
+        }
 
         val kitData = if (userdata.kits.containsKey(kitId)) userdata.kits[kitId]!! else KitData()
 
@@ -85,15 +95,18 @@ class Kit(
             requirements.executeSuccessActions(player, kitId, this, kitData)
         }
 
-        for (item in items) {
-            item.giveItem(player, kitId, this, kitData)
-        }
-
         kitData.uses += 1
         kitData.lastUse = System.currentTimeMillis()
         userdata.kits[kitId] = kitData
 
-        SkiesKits.INSTANCE.storage.saveUser(player.uuid, userdata)
+        if (!SkiesKits.INSTANCE.storage!!.saveUser(player.uuid, userdata)) {
+            player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+            return
+        }
+
+        for (item in items) {
+            item.giveItem(player, kitId, this, kitData)
+        }
 
         actions.executeClaimedActions(player, kitId, this, kitData)
 

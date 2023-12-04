@@ -50,13 +50,13 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
         return UserData(kits)
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData) {
+    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
         if (database == null) {
             Utils.printError("The database connection was not completed! Please check the storage configuration options.")
-            return
+            return false
         }
 
-        try {
+        return try {
             database!!.execute(
                 String.format(
                     "REPLACE INTO userdata (uuid, kits) VALUES ('%s', '%s')",
@@ -64,9 +64,9 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
                     SkiesKits.INSTANCE.gson.toJson(userData.kits)
                 )
             )
-            return
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
     }
 
@@ -74,5 +74,9 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
         if (database != null) {
             database!!.closeConnection()
         }
+    }
+
+    override fun isConnected(): Boolean {
+        return database != null
     }
 }

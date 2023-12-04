@@ -47,7 +47,7 @@ class SkiesKits : ModInitializer {
 
     lateinit var configDir: File
     lateinit var configManager: ConfigManager
-    lateinit var storage: IStorage
+    var storage: IStorage? = null
 
     var economyService: IEconomyService? = null
     lateinit var placeholderManager: PlaceholderManager
@@ -75,7 +75,12 @@ class SkiesKits : ModInitializer {
 
         this.configDir = File(FabricLoader.getInstance().configDirectory, "skieskits")
         this.configManager = ConfigManager(configDir)
-        this.storage = IStorage.load(configManager.config.storage)
+        try {
+            this.storage = IStorage.load(configManager.config.storage)
+        } catch (e: IOException) {
+            Utils.printError(e.message)
+            this.storage = null
+        }
 
         this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
         this.placeholderManager = PlaceholderManager()
@@ -92,7 +97,7 @@ class SkiesKits : ModInitializer {
         })
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer? ->
             this.adventure = null
-            this.storage.close()
+            this.storage?.close()
         })
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
             BaseCommand().register(
@@ -117,10 +122,15 @@ class SkiesKits : ModInitializer {
     }
 
     fun reload() {
-        this.storage.close()
+        this.storage?.close()
 
         this.configManager.reload()
-        this.storage = IStorage.load(configManager.config.storage)
+        try {
+            this.storage = IStorage.load(configManager.config.storage)
+        } catch (e: IOException) {
+            Utils.printError(e.message)
+            this.storage = null
+        }
         this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
     }
 
@@ -147,7 +157,7 @@ class SkiesKits : ModInitializer {
         return value
     }
 
-    fun <T> saveFile(filename: String, `object`: T) {
+    fun <T> saveFile(filename: String, `object`: T): Boolean {
         val file = File(configDir, filename)
         try {
             FileWriter(file).use { fileWriter ->
@@ -156,6 +166,8 @@ class SkiesKits : ModInitializer {
             }
         } catch (e: Exception) {
             e.printStackTrace()
+            return false
         }
+        return true
     }
 }
