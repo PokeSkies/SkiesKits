@@ -2,7 +2,7 @@
 
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.8.22")
-    id("quiet-fabric-loom") version "1.2-SNAPSHOT"
+    id("quiet-fabric-loom") version "1.4-SNAPSHOT"
 }
 
 val modId = project.properties["mod_id"].toString()
