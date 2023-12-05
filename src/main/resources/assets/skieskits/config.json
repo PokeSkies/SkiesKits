@@ -12,13 +12,13 @@
       "useUnicode": true,
       "characterEncoding": "utf8"
     },
-    "poolSettings": {
-      "maxiumumPoolSize": 10,
-      "minimumIdle": 10,
-      "keepAliveTime": 0,
-      "connectionTimeout": 30000,
-      "idleTimeout": 600000,
-      "maxLifetime": 1800000
+    "pool_settings": {
+      "maxiumum_pool_size": 10,
+      "minimum_idle": 10,
+      "keep_alive_time": 0,
+      "connection_timeout": 30000,
+      "idle_timeout": 600000,
+      "max_lifetime": 1800000
     }
   },
   "messages": {

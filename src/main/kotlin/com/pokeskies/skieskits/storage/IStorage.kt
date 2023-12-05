@@ -23,6 +23,4 @@ interface IStorage {
     fun saveUser(uuid: UUID, userData: UserData): Boolean
 
     fun close() {}
-
-    fun isConnected(): Boolean
 }

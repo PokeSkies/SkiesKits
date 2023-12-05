@@ -19,6 +19,7 @@ class MainConfig(
         val username: String = "root",
         val password: String = "",
         val properties: Map<String, String> = mapOf("useUnicode" to "true", "characterEncoding" to "utf8"),
+        @SerializedName("pool_settings")
         val poolSettings: StoragePoolSettings = StoragePoolSettings()
     ) {
         override fun toString(): String {
@@ -27,12 +28,20 @@ class MainConfig(
         }
     }
 
-    class StoragePoolSettings(val maximumPoolSize: Int = 10,
-                              val minimumIdle: Int = 10,
-                              val keepaliveTime: Long = 0,
-                              val connectionTimeout: Long = 30000,
-                              val idleTimeout: Long = 600000,
-                              val maxLifetime: Long = 1800000) {
+    class StoragePoolSettings(
+        @SerializedName("maximum_pool_size")
+        val maximumPoolSize: Int = 10,
+        @SerializedName("minimum_idle")
+        val minimumIdle: Int = 10,
+        @SerializedName("keepalive_time")
+        val keepaliveTime: Long = 0,
+        @SerializedName("connection_timeout")
+        val connectionTimeout: Long = 30000,
+        @SerializedName("idle_timeout")
+        val idleTimeout: Long = 600000,
+        @SerializedName("max_lifetime")
+        val maxLifetime: Long = 1800000
+    ) {
         override fun toString(): String {
             return "StoragePoolSettings(maximumPoolSize=$maximumPoolSize, minimumIdle=$minimumIdle," +
                     " keepaliveTime=$keepaliveTime, connectionTimeout=$connectionTimeout," +

@@ -84,8 +84,4 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
     override fun close() {
         mongoClient?.close()
     }
-
-    override fun isConnected(): Boolean {
-        return mongoClient != null && mongoDatabase != null && userdataCollection != null
-    }
 }
