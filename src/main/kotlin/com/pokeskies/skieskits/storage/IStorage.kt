@@ -20,7 +20,9 @@ interface IStorage {
 
     fun getUser(uuid: UUID): UserData
 
-    fun saveUser(uuid: UUID, userData: UserData)
+    fun saveUser(uuid: UUID, userData: UserData): Boolean
 
     fun close() {}
+
+    fun isConnected(): Boolean
 }

@@ -62,10 +62,10 @@ class ConfigManager(private val configDir: File) {
         }
 
         // If the 'kits' directory does not exist, create it and copy the default example GUI
-        val guiDirectory = configDir.resolve("kits")
-        if (!guiDirectory.exists()) {
-            guiDirectory.mkdirs()
-            val file = guiDirectory.resolve("example_kit.json")
+        val kitsDir = configDir.resolve("kits")
+        if (!kitsDir.exists()) {
+            kitsDir.mkdirs()
+            val file = kitsDir.resolve("example_kit.json")
             try {
                 val resourceFile: Path =
                     Path.of(classLoader.getResource("assets/skieskits/kits/example_kit.json").toURI())
@@ -92,7 +92,7 @@ class ConfigManager(private val configDir: File) {
                             KITS[id] = SkiesKits.INSTANCE.gsonPretty.fromJson(JsonParser.parseReader(jsonReader), Kit::class.java)
                             Utils.printInfo("Successfully read and loaded the file $fileName!")
                         } catch (ex: Exception) {
-                            Utils.printError("Error while trying to parse the file $fileName as a GUI!")
+                            Utils.printError("Error while trying to parse the file $fileName as a Kit!")
                             ex.printStackTrace()
                         }
                     } else {

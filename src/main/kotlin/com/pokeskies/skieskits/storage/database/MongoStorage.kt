@@ -18,6 +18,7 @@ import com.pokeskies.skieskits.data.UserData
 import com.pokeskies.skieskits.storage.IStorage
 import com.pokeskies.skieskits.utils.Utils
 import org.bson.Document
+import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
 
@@ -44,7 +45,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
             this.mongoDatabase = mongoClient!!.getDatabase(config.database)
             this.userdataCollection = this.mongoDatabase!!.getCollection("userdata")
         } catch (e: Exception) {
-            Utils.printError("Error while attempting to setup Mongo Database: $e")
+            throw IOException("Error while attempting to setup Mongo Database: $e")
         }
 
     }
@@ -63,10 +64,10 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         }
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData) {
+    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
         if (mongoDatabase == null) {
             Utils.printError("There was an error while attempting to save data to the Mongo database!")
-            return
+            return false
         }
         val query = Filters.eq("uuid", uuid.toString())
         var doc: Document? = userdataCollection?.find(query)?.first()
@@ -75,10 +76,16 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         }
         doc["uuid"] = uuid.toString()
         doc["kits"] = SkiesKits.INSTANCE.gson.toJson(userData.kits)
-        this.userdataCollection?.replaceOne(query, doc, ReplaceOptions().upsert(true))
+        val result = this.userdataCollection?.replaceOne(query, doc, ReplaceOptions().upsert(true))
+
+        return result?.wasAcknowledged() ?: false
     }
 
     override fun close() {
         mongoClient?.close()
+    }
+
+    override fun isConnected(): Boolean {
+        return mongoClient != null && mongoDatabase != null && userdataCollection != null
     }
 }

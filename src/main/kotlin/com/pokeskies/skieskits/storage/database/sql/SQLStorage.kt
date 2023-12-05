@@ -42,17 +42,18 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
         return UserData(kits)
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData) {
-        try {
+    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
+        return try {
             connectionProvider.createConnection().use {
                 val statement = it.createStatement()
                 statement.execute(String.format("REPLACE INTO userdata (uuid, kits) VALUES ('%s', '%s')",
                     uuid.toString(),
                     SkiesKits.INSTANCE.gson.toJson(userData.kits)))
             }
-            return
+            true
         } catch (e: Exception) {
             e.printStackTrace()
+            false
         }
     }
 

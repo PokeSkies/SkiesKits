@@ -40,7 +40,7 @@ class KitsMenu(
                 continue
             }
 
-            val userdata = SkiesKits.INSTANCE.storage.getUser(player.uuid)
+            val userdata = SkiesKits.INSTANCE.storage?.getUser(player.uuid) ?: return
             val kitData = if (userdata.kits.containsKey(kitId)) userdata.kits[kitId]!! else KitData()
 
             if (!kit.hasPermission(player)) {

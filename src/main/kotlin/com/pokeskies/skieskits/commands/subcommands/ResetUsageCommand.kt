@@ -48,13 +48,20 @@ class ResetUsageCommand : SubCommand {
                 return 1
             }
 
+            if (SkiesKits.INSTANCE.storage == null) {
+                ctx.source.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+                return 1
+            }
+
             for (player in players) {
-                val userdata = SkiesKits.INSTANCE.storage.getUser(player.uuid)
-                val kitData = userdata.kits[kitId]
-                if (kitData != null) {
-                    kitData.uses = 0
-                    userdata.kits[kitId] = kitData
-                    SkiesKits.INSTANCE.storage.saveUser(player.uuid, userdata)
+                val userdata = SkiesKits.INSTANCE.storage?.getUser(player.uuid)
+                if (userdata != null) {
+                    val kitData = userdata.kits[kitId]
+                    if (kitData != null) {
+                        kitData.uses = 0
+                        userdata.kits[kitId] = kitData
+                        SkiesKits.INSTANCE.storage?.saveUser(player.uuid, userdata)
+                    }
                 }
             }
 
@@ -72,16 +79,24 @@ class ResetUsageCommand : SubCommand {
                 return 1
             }
 
+            if (SkiesKits.INSTANCE.storage == null) {
+                ctx.source.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+                return 1
+            }
+
             for (player in players) {
-                val userdata = SkiesKits.INSTANCE.storage.getUser(player.uuid)
-                for ((kitId, kit) in ConfigManager.KITS) {
-                    if (userdata.kits.containsKey(kitId)) {
-                        val kitData = userdata.kits[kitId]!!
-                        kitData.uses = 0
-                        userdata.kits[kitId] = kitData
+                val userdata = SkiesKits.INSTANCE.storage?.getUser(player.uuid)
+                if (userdata != null) {
+
+                    for ((kitId, kit) in ConfigManager.KITS) {
+                        if (userdata.kits.containsKey(kitId)) {
+                            val kitData = userdata.kits[kitId]!!
+                            kitData.uses = 0
+                            userdata.kits[kitId] = kitData
+                        }
                     }
+                    SkiesKits.INSTANCE.storage?.saveUser(player.uuid, userdata)
                 }
-                SkiesKits.INSTANCE.storage.saveUser(player.uuid, userdata)
             }
 
             ctx.source.sendMessage(Utils.deserializeText(

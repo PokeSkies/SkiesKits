@@ -2,7 +2,7 @@
 
 plugins {
     id("org.jetbrains.kotlin.jvm").version("1.8.22")
-    id("quiet-fabric-loom") version "1.2-SNAPSHOT"
+    id("quiet-fabric-loom") version "1.4-SNAPSHOT"
 }
 
 val modId = project.properties["mod_id"].toString()
@@ -90,6 +90,10 @@ tasks.processResources {
     filesMatching("**/lang/*.json") {
         expand("id" to modId)
     }
+}
+
+tasks.remapJar {
+    archiveFileName.set("${project.name}-fabric-${project.properties["minecraft_version"]}-${project.version}.jar")
 }
 
 tasks.withType<JavaCompile> {
