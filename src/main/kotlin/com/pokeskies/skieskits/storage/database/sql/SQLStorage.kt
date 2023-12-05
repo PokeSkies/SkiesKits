@@ -9,40 +9,32 @@ import com.pokeskies.skieskits.storage.IStorage
 import com.pokeskies.skieskits.storage.StorageType
 import com.pokeskies.skieskits.storage.database.sql.providers.MySQLProvider
 import com.pokeskies.skieskits.storage.database.sql.providers.SQLiteProvider
-import com.pokeskies.skieskits.utils.Utils
 import java.lang.reflect.Type
-import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
 
 
 class SQLStorage(config: MainConfig.Storage) : IStorage {
-    private var database: SQLDatabase?
+    private val connectionProvider: ConnectionProvider = when (config.type) {
+        StorageType.MYSQL -> MySQLProvider(config)
+        StorageType.SQLITE -> SQLiteProvider(config)
+        else -> throw IllegalStateException("Invalid storage type!")
+    }
     private val type: Type = object : TypeToken<MutableMap<String, KitData>>() {}.type
 
     init {
-        database = when(config.type) {
-            StorageType.MYSQL -> MySQLProvider(config)
-            StorageType.SQLITE -> SQLiteProvider(config)
-            else -> null
-        }
-
-        if (database == null) {
-            Utils.printError("The database returned null while initializing! Please check the storage configuration options.")
-        }
+        connectionProvider.init()
     }
 
     override fun getUser(uuid: UUID): UserData {
-        if (database == null) {
-            Utils.printError("The database connection was not completed! Please check the storage configuration options.")
-            return UserData()
-        }
-
         var kits: MutableMap<String, KitData> = mutableMapOf()
         try {
-            val result: ResultSet? = database!!.executeQuery(String.format("SELECT * FROM userdata WHERE uuid='%s'", uuid.toString()))
-            if (result != null && result.next()) {
-                kits = SkiesKits.INSTANCE.gson.fromJson(result.getString("kits"), type)
+            connectionProvider.createConnection().use {
+                val statement = it.createStatement()
+                val result = statement.executeQuery(String.format("SELECT * FROM userdata WHERE uuid='%s'", uuid.toString()))
+                if (result != null && result.next()) {
+                    kits = SkiesKits.INSTANCE.gson.fromJson(result.getString("kits"), type)
+                }
             }
         } catch (e: SQLException) {
             e.printStackTrace()
@@ -51,19 +43,14 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
     }
 
     override fun saveUser(uuid: UUID, userData: UserData): Boolean {
-        if (database == null) {
-            Utils.printError("The database connection was not completed! Please check the storage configuration options.")
-            return false
-        }
-
         return try {
-            database!!.execute(
-                String.format(
-                    "REPLACE INTO userdata (uuid, kits) VALUES ('%s', '%s')",
+            connectionProvider.createConnection().use {
+                val statement = it.createStatement()
+                statement.execute(String.format("REPLACE INTO userdata (uuid, kits) VALUES ('%s', '%s')",
                     uuid.toString(),
-                    SkiesKits.INSTANCE.gson.toJson(userData.kits)
-                )
-            )
+                    SkiesKits.INSTANCE.gson.toJson(userData.kits)))
+            }
+            true
         } catch (e: Exception) {
             e.printStackTrace()
             false
@@ -71,12 +58,6 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
     }
 
     override fun close() {
-        if (database != null) {
-            database!!.closeConnection()
-        }
-    }
-
-    override fun isConnected(): Boolean {
-        return database != null
+        connectionProvider.shutdown()
     }
 }

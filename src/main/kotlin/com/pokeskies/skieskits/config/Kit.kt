@@ -24,7 +24,7 @@ class Kit(
     val actions: ActionOptions = ActionOptions(),
 ) {
     fun claim(kitId: String, player: ServerPlayerEntity, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
-        if (SkiesKits.INSTANCE.storage == null || !SkiesKits.INSTANCE.storage!!.isConnected()) {
+        if (SkiesKits.INSTANCE.storage == null) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
             return
         }

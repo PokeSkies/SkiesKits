@@ -7,7 +7,19 @@
     "port": 27017,
     "database":  "skieskits",
     "username": "root",
-    "password":  ""
+    "password": "",
+    "properties": {
+      "useUnicode": true,
+      "characterEncoding": "utf8"
+    },
+    "pool_settings": {
+      "maxiumum_pool_size": 10,
+      "minimum_idle": 10,
+      "keep_alive_time": 0,
+      "connection_timeout": 30000,
+      "idle_timeout": 600000,
+      "max_lifetime": 1800000
+    }
   },
   "messages": {
     "kit_not_found": "<red>Could not find a kit named %kit_name%!",

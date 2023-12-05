@@ -21,8 +21,4 @@ class FileStorage : IStorage {
         fileData.userdata[uuid] = userData
         return SkiesKits.INSTANCE.saveFile(STORAGE_FILENAME, fileData)
     }
-
-    override fun isConnected(): Boolean {
-        return true
-    }
 }
