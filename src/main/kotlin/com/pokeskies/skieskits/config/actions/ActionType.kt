@@ -4,7 +4,6 @@ import com.google.gson.*
 import com.pokeskies.skieskits.config.actions.types.*
 import java.lang.reflect.Type
 
-
 enum class ActionType(val identifier: String, val clazz: Class<*>) {
     COMMAND_CONSOLE("command_console", CommandConsole::class.java),
     COMMAND_PLAYER("command_player", CommandPlayer::class.java),

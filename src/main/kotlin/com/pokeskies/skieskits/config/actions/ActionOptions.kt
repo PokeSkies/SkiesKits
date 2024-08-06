@@ -3,7 +3,7 @@ package com.pokeskies.skieskits.config.actions
 import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class ActionOptions(
     val claimed: Map<String, Action> = emptyMap(),
@@ -16,7 +16,7 @@ class ActionOptions(
     @SerializedName("failed_requirements")
     val failedRequirements: Map<String, Action> = emptyMap()
 ) {
-    fun executeClaimedActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeClaimedActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in claimed) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
                 action.attemptExecution(player, kitId, kit, kitData)
@@ -27,7 +27,7 @@ class ActionOptions(
         }
     }
 
-    fun executeCooldownActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeCooldownActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in onCooldown) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
                 action.attemptExecution(player, kitId, kit, kitData)
@@ -38,7 +38,7 @@ class ActionOptions(
         }
     }
 
-    fun executePermissionActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executePermissionActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in noPermission) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
                 action.attemptExecution(player, kitId, kit, kitData)
@@ -49,7 +49,7 @@ class ActionOptions(
         }
     }
 
-    fun executeUsesActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeUsesActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in maxUses) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
                 action.attemptExecution(player, kitId, kit, kitData)
@@ -60,7 +60,7 @@ class ActionOptions(
         }
     }
 
-    fun executeRequirementsActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeRequirementsActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in failedRequirements) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
                 action.attemptExecution(player, kitId, kit, kitData)

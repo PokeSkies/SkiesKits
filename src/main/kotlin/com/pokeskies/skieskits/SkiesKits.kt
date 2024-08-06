@@ -25,11 +25,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.ServerSt
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.platform.fabric.FabricServerAudiences
-import net.minecraft.item.Item
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.registry.Registries
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.MinecraftServer
-import net.minecraft.sound.SoundEvent
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.world.item.Item
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.graalvm.polyglot.Engine
@@ -63,9 +63,9 @@ class SkiesKits : ModInitializer {
         .registerTypeAdapter(ComparisonType::class.java, ComparisonType.ComparisonTypeAdaptor())
         .registerTypeAdapter(EconomyType::class.java, EconomyType.EconomyTypeAdaptor())
         .registerTypeAdapter(StorageType::class.java, StorageType.StorageTypeAdaptor())
-        .registerTypeHierarchyAdapter(Item::class.java, Utils.RegistrySerializer(Registries.ITEM))
-        .registerTypeHierarchyAdapter(SoundEvent::class.java, Utils.RegistrySerializer(Registries.SOUND_EVENT))
-        .registerTypeHierarchyAdapter(NbtCompound::class.java, Utils.CodecSerializer(NbtCompound.CODEC))
+        .registerTypeHierarchyAdapter(Item::class.java, Utils.RegistrySerializer(BuiltInRegistries.ITEM))
+        .registerTypeHierarchyAdapter(SoundEvent::class.java, Utils.RegistrySerializer(BuiltInRegistries.SOUND_EVENT))
+        .registerTypeHierarchyAdapter(CompoundTag::class.java, Utils.CodecSerializer(CompoundTag.CODEC))
         .create()
 
     var gsonPretty: Gson = gson.newBuilder().setPrettyPrinting().create()
@@ -108,7 +108,7 @@ class SkiesKits : ModInitializer {
         ServerPlayConnectionEvents.JOIN.register { event, _, _ ->
             Task.builder().execute { ctx ->
                 val player = event.player
-                if (!player.isDisconnected) {
+                if (!player.hasDisconnected()) {
                     for ((id, kit) in ConfigManager.KITS) {
                         if (kit.onJoin && kit.hasPermission(player)) {
                             kit.claim(id, player)

@@ -7,7 +7,7 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class PermissionRequirement(
     type: RequirementType = RequirementType.PERMISSION,
@@ -16,7 +16,7 @@ class PermissionRequirement(
     successActions: Map<String, Action> = emptyMap(),
     private val permission: String = ""
 ) : Requirement(type, comparison, denyActions, successActions) {
-    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

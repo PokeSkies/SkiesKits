@@ -6,7 +6,7 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class PlaceholderRequirement(
     type: RequirementType = RequirementType.PERMISSION,
@@ -15,7 +15,7 @@ class PlaceholderRequirement(
     private val output: String = "",
     private val strict: Boolean = false
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

@@ -9,21 +9,21 @@ import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.command.CommandSource
-import net.minecraft.command.argument.EntityArgumentType
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.commands.Commands
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.SharedSuggestionProvider
 
 class GiveCommand : SubCommand {
-    override fun build(): LiteralCommandNode<ServerCommandSource> {
-        return CommandManager.literal("give")
-                .then(CommandManager.argument("kit", StringArgumentType.word())
+    override fun build(): LiteralCommandNode<CommandSourceStack> {
+        return Commands.literal("give")
+                .then(Commands.argument("kit", StringArgumentType.word())
                     .requires(Permissions.require("skieskits.command.give", 4))
                     .suggests { _, builder ->
-                        CommandSource.suggestMatching(ConfigManager.KITS.keys.stream(), builder)
+                        SharedSuggestionProvider.suggest(ConfigManager.KITS.keys.stream(), builder)
                     }
-                    .then(CommandManager.argument("player", EntityArgumentType.players())
-                        .then(CommandManager.argument("bypass", BoolArgumentType.bool())
+                    .then(Commands.argument("player", EntityArgument.players())
+                        .then(Commands.argument("bypass", BoolArgumentType.bool())
                             .executes(Companion::give)
                         )
                         .executes(Companion::give)
@@ -33,8 +33,8 @@ class GiveCommand : SubCommand {
     }
 
     companion object {
-        fun give(ctx: CommandContext<ServerCommandSource>): Int {
-            val players = EntityArgumentType.getPlayers(ctx, "player")
+        fun give(ctx: CommandContext<CommandSourceStack>): Int {
+            val players = EntityArgument.getPlayers(ctx, "player")
             if (players.isNullOrEmpty()) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must provide a target player!"))
                 return 1

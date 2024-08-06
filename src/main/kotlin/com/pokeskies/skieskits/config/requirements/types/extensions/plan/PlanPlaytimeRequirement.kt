@@ -7,14 +7,14 @@ import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.PlanExtensionHelper
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class PlanPlaytimeRequirement(
     type: RequirementType = RequirementType.PERMISSION,
     comparison: ComparisonType = ComparisonType.EQUALS,
     private val time: Long = 0
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

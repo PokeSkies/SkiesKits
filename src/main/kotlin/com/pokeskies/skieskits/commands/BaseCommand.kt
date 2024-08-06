@@ -10,32 +10,32 @@ import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.gui.KitsMenu
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.command.CommandSource
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
+import net.minecraft.commands.SharedSuggestionProvider
 
 class BaseCommand {
     private val aliases = listOf("skieskits", "kits", "kit")
 
-    fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
-        val rootCommands: List<LiteralCommandNode<ServerCommandSource>> = aliases.map {
-            CommandManager.literal(it)
+    fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
+        val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = aliases.map {
+            Commands.literal(it)
                 .requires(Permissions.require("skieskits.command.base", 4))
-                .then(CommandManager.argument("kit", StringArgumentType.word())
+                .then(Commands.argument("kit", StringArgumentType.word())
                     .requires(Permissions.require("skieskits.command.claim", 4))
                     .suggests { ctx, builder ->
-                        CommandSource.suggestMatching(ConfigManager.KITS.filter { entry ->
-                            return@filter !(ctx.source.isExecutedByPlayer && !entry.value.hasPermission(ctx.source.player!!))
+                        SharedSuggestionProvider.suggest(ConfigManager.KITS.filter { entry ->
+                            return@filter !(ctx.source.isPlayer && !entry.value.hasPermission(ctx.source.player!!))
                         }.keys, builder)
                     }
-                    .requires { obj: ServerCommandSource -> obj.isExecutedByPlayer }
+                    .requires { obj: CommandSourceStack -> obj.isPlayer }
                     .executes(ClaimCommand::claim)
                 )
                 .executes(Companion::openMenu)
                 .build()
         }
 
-        val subCommands: List<LiteralCommandNode<ServerCommandSource>> = listOf(
+        val subCommands: List<LiteralCommandNode<CommandSourceStack>> = listOf(
             ReloadCommand().build(),
             DebugCommand().build(),
             ClaimCommand().build(),
@@ -51,7 +51,7 @@ class BaseCommand {
     }
 
     companion object {
-        fun openMenu(ctx: CommandContext<ServerCommandSource>): Int {
+        fun openMenu(ctx: CommandContext<CommandSourceStack>): Int {
             val player = ctx.source.player
             if (player == null) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must be a player to run this command!"))

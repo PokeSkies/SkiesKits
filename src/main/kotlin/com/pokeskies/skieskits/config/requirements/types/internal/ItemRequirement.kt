@@ -6,28 +6,28 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 
 class ItemRequirement(
     type: RequirementType = RequirementType.ITEM,
     comparison: ComparisonType = ComparisonType.EQUALS,
     val item: Item = Items.BARRIER,
     val amount: Int? = null,
-    val nbt: NbtCompound? = null,
+    val nbt: CompoundTag? = null,
     val strict: Boolean = true
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 
         val targetAmount = amount ?: 1
         var amountFound = 0
 
-        for (itemStack in player.inventory.main) {
+        for (itemStack in player.inventory.items) {
             if (!itemStack.isEmpty) {
                 if (isItem(itemStack)) {
                     amountFound += itemStack.count

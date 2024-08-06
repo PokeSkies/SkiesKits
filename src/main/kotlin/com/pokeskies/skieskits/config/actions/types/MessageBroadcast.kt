@@ -7,7 +7,7 @@ import com.pokeskies.skieskits.config.actions.ActionType
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class MessageBroadcast(
     type: ActionType = ActionType.BROADCAST,
@@ -16,7 +16,7 @@ class MessageBroadcast(
     requirements: RequirementOptions? = RequirementOptions(),
     private val message: List<String> = emptyList()
 ) : Action(type, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    override fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (SkiesKits.INSTANCE.adventure == null) {
             Utils.printError("There was an error while executing an action for player ${player.name}: Adventure was somehow null on message broadcast?")

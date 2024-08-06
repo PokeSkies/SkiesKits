@@ -7,7 +7,7 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class CurrencyRequirement(
     type: RequirementType = RequirementType.CURRENCY,
@@ -15,7 +15,7 @@ class CurrencyRequirement(
     private val currency: String = "",
     private val amount: Double = 0.0
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

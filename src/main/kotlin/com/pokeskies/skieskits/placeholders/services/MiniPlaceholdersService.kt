@@ -8,7 +8,7 @@ import com.pokeskies.skieskits.utils.Utils
 import io.github.miniplaceholders.api.MiniPlaceholders
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class MiniPlaceholdersService : IPlaceholderService {
     private val miniMessage = MiniMessage.builder()
@@ -19,7 +19,7 @@ class MiniPlaceholdersService : IPlaceholderService {
         Utils.printInfo("MiniPlaceholders mod found! Enabling placeholder integration...")
     }
 
-    override fun parsePlaceholders(player: ServerPlayerEntity, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
+    override fun parsePlaceholders(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
         val resolver = TagResolver.resolver(
             MiniPlaceholders.getGlobalPlaceholders(),
             MiniPlaceholders.getAudiencePlaceholders(player)

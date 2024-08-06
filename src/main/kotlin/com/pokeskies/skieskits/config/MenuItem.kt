@@ -3,12 +3,11 @@ package com.pokeskies.skieskits.config
 import ca.landonjw.gooeylibs2.api.button.GooeyButton
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 
 class MenuItem(
     val slots: List<Int> = emptyList(),
@@ -16,9 +15,9 @@ class MenuItem(
     val amount: Int = 1,
     val name: String? = null,
     val lore: List<String> = emptyList(),
-    val nbt: NbtCompound? = null
+    val nbt: CompoundTag? = null
 ) {
-    fun createButton(player: ServerPlayerEntity, kitId: String?, kit: Kit?, kitData: KitData?): GooeyButton.Builder {
+    fun createButton(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?): GooeyButton.Builder {
         val stack = ItemStack(item, amount)
 
         if (nbt != null) {

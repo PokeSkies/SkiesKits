@@ -5,7 +5,7 @@ import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 abstract class Requirement(
     val type: RequirementType? = null,
@@ -15,7 +15,7 @@ abstract class Requirement(
     @SerializedName("success_actions")
     val successActions: Map<String, Action> = emptyMap()
 ) {
-    abstract fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean
+    abstract fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean
 
     open fun allowedComparisons(): List<ComparisonType> {
         return emptyList()
@@ -29,13 +29,13 @@ abstract class Requirement(
         return true
     }
 
-    fun executeSuccessActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in successActions) {
             action.attemptExecution(player, kitId, kit, kitData)
         }
     }
 
-    fun executeDenyActions(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         for ((id, action) in denyActions) {
             action.attemptExecution(player, kitId, kit, kitData)
         }

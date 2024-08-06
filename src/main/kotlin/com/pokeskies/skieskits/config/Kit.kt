@@ -7,7 +7,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class Kit(
     @SerializedName("display_name")
@@ -23,7 +23,7 @@ class Kit(
     val requirements: RequirementOptions = RequirementOptions(),
     val actions: ActionOptions = ActionOptions(),
 ) {
-    fun claim(kitId: String, player: ServerPlayerEntity, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
+    fun claim(kitId: String, player: ServerPlayer, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
         if (SkiesKits.INSTANCE.storage == null) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
             return
@@ -124,7 +124,7 @@ class Kit(
         return if (displayName.isNullOrBlank()) id else displayName
     }
 
-    fun hasPermission(player: ServerPlayerEntity): Boolean {
+    fun hasPermission(player: ServerPlayer): Boolean {
         return if (!permission.isNullOrEmpty()) Permissions.check(player, permission) else true
     }
 

@@ -8,19 +8,19 @@ import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.command.CommandSource
-import net.minecraft.command.argument.EntityArgumentType
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.commands.arguments.EntityArgument
+import net.minecraft.commands.Commands
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.SharedSuggestionProvider
 
 class ResetCooldownCommand : SubCommand {
-    override fun build(): LiteralCommandNode<ServerCommandSource> {
-        return CommandManager.literal("resetcooldown")
-            .then(CommandManager.argument("player", EntityArgumentType.players())
-                .then(CommandManager.argument("kit", StringArgumentType.word())
+    override fun build(): LiteralCommandNode<CommandSourceStack> {
+        return Commands.literal("resetcooldown")
+            .then(Commands.argument("player", EntityArgument.players())
+                .then(Commands.argument("kit", StringArgumentType.word())
                     .requires(Permissions.require("skieskits.command.resetcooldown", 4))
                     .suggests { _, builder ->
-                        CommandSource.suggestMatching(ConfigManager.KITS.keys.stream(), builder)
+                        SharedSuggestionProvider.suggest(ConfigManager.KITS.keys.stream(), builder)
                     }
                     .executes(Companion::resetSpecific)
                 )
@@ -31,8 +31,8 @@ class ResetCooldownCommand : SubCommand {
     }
 
     companion object {
-        fun resetSpecific(ctx: CommandContext<ServerCommandSource>): Int {
-            val players = EntityArgumentType.getPlayers(ctx, "player")
+        fun resetSpecific(ctx: CommandContext<CommandSourceStack>): Int {
+            val players = EntityArgument.getPlayers(ctx, "player")
             if (players.isNullOrEmpty()) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must provide a target player!"))
                 return 1
@@ -64,7 +64,7 @@ class ResetCooldownCommand : SubCommand {
                     }
                 }
             }
-            
+
             ctx.source.sendMessage(Utils.deserializeText(
                 "<green>Reset cooldown for the kit <b>$kitId</b> for <b>${players.size}</b> player(s)!"
             ))
@@ -72,8 +72,8 @@ class ResetCooldownCommand : SubCommand {
             return 1
         }
 
-        fun resetAll(ctx: CommandContext<ServerCommandSource>): Int {
-            val players = EntityArgumentType.getPlayers(ctx, "player")
+        fun resetAll(ctx: CommandContext<CommandSourceStack>): Int {
+            val players = EntityArgument.getPlayers(ctx, "player")
             if (players.isNullOrEmpty()) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must provide a target player!"))
                 return 1

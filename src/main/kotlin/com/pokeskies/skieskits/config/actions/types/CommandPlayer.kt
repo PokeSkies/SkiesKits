@@ -7,7 +7,7 @@ import com.pokeskies.skieskits.config.actions.ActionType
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class CommandPlayer(
     type: ActionType = ActionType.COMMAND_PLAYER,
@@ -16,16 +16,16 @@ class CommandPlayer(
     requirements: RequirementOptions? = RequirementOptions(),
     private val commands: List<String> = emptyList()
 ) : Action(type, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    override fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
-        if (SkiesKits.INSTANCE.server?.commandManager == null) {
+        if (SkiesKits.INSTANCE.server?.commands == null) {
             Utils.printError("There was an error while executing an action for player ${player.name}: Server was somehow null on command execution?")
             return
         }
 
         for (command in commands) {
-            SkiesKits.INSTANCE.server?.commandManager?.executeWithPrefix(
-                player.commandSource,
+            SkiesKits.INSTANCE.server?.commands?.performPrefixedCommand(
+                player.createCommandSourceStack(),
                 Utils.parsePlaceholders(player, command, kitId, kit, kitData)
             )
         }
