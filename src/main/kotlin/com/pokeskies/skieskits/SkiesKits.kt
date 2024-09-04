@@ -108,8 +108,10 @@ class SkiesKits : ModInitializer {
         ServerPlayConnectionEvents.JOIN.register { event, _, _ ->
             Task.builder().execute { ctx ->
                 val player = event.player
+                Utils.printDebug("Player ${player.name.string} joined the server! Checking ${ConfigManager.KITS.size} kits...")
                 if (!player.isDisconnected) {
                     for ((id, kit) in ConfigManager.KITS) {
+                        Utils.printDebug("Checking kit $id! Kit onJoin=${kit.onJoin}, Player hasPermission=${kit.hasPermission(player)}")
                         if (kit.onJoin && kit.hasPermission(player)) {
                             kit.claim(id, player)
                         }
