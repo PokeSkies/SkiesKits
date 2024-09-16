@@ -7,12 +7,7 @@ import com.zaxxer.hikari.HikariDataSource
 import java.sql.Connection
 import java.sql.SQLException
 
-/**
- * @author Pedro Souza
- * @since 03/12/2023
- */
 abstract class HikariCPProvider(private val storageConfig: MainConfig.Storage): ConnectionProvider {
-
     private lateinit var dataSource: HikariDataSource
 
     @Throws(SQLException::class)
@@ -34,6 +29,21 @@ abstract class HikariCPProvider(private val storageConfig: MainConfig.Storage): 
         config.maxLifetime = storageConfig.poolSettings.maxLifetime
 
         dataSource = HikariDataSource(config)
+
+        try {
+            createConnection().use {
+                val statement = it.createStatement()
+                    statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS userdata (" +
+                            "uuid VARCHAR(36) NOT NULL, " +
+                            "kits TEXT NOT NULL, " +
+                            "PRIMARY KEY (uuid)" +
+                            ")"
+                )
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
     }
 
     @Throws(SQLException::class)
@@ -64,6 +74,4 @@ abstract class HikariCPProvider(private val storageConfig: MainConfig.Storage): 
             return false
         return !dataSource.isClosed
     }
-
-
 }
