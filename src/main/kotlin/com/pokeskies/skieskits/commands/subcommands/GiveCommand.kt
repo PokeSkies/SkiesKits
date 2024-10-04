@@ -18,7 +18,7 @@ class GiveCommand : SubCommand {
     override fun build(): LiteralCommandNode<ServerCommandSource> {
         return CommandManager.literal("give")
                 .then(CommandManager.argument("kit", StringArgumentType.word())
-                    .requires(Permissions.require("skieskits.command.give", 4))
+                    .requires(Permissions.require("skieskits.command.give", 2))
                     .suggests { _, builder ->
                         CommandSource.suggestMatching(ConfigManager.KITS.keys.stream(), builder)
                     }

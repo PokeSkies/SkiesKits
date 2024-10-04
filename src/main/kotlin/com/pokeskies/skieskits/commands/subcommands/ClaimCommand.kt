@@ -16,7 +16,7 @@ class ClaimCommand : SubCommand {
     override fun build(): LiteralCommandNode<ServerCommandSource> {
         return CommandManager.literal("claim")
             .then(CommandManager.argument("kit", StringArgumentType.word())
-                .requires(Permissions.require("skieskits.command.claim", 4))
+                .requires(Permissions.require("skieskits.command.claim", 2))
                 .suggests { ctx, builder ->
                     CommandSource.suggestMatching(ConfigManager.KITS.filter { entry ->
                         return@filter !(ctx.source.isExecutedByPlayer && !entry.value.hasPermission(ctx.source.player!!))

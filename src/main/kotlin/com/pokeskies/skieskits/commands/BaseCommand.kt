@@ -20,9 +20,9 @@ class BaseCommand {
     fun register(dispatcher: CommandDispatcher<ServerCommandSource>) {
         val rootCommands: List<LiteralCommandNode<ServerCommandSource>> = aliases.map {
             CommandManager.literal(it)
-                .requires(Permissions.require("skieskits.command.base", 4))
+                .requires(Permissions.require("skieskits.command.base", 2))
                 .then(CommandManager.argument("kit", StringArgumentType.word())
-                    .requires(Permissions.require("skieskits.command.claim", 4))
+                    .requires(Permissions.require("skieskits.command.claim", 2))
                     .suggests { ctx, builder ->
                         CommandSource.suggestMatching(ConfigManager.KITS.filter { entry ->
                             return@filter !(ctx.source.isExecutedByPlayer && !entry.value.hasPermission(ctx.source.player!!))

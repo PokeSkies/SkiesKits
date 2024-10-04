@@ -18,13 +18,13 @@ class ResetCooldownCommand : SubCommand {
         return CommandManager.literal("resetcooldown")
             .then(CommandManager.argument("player", EntityArgumentType.players())
                 .then(CommandManager.argument("kit", StringArgumentType.word())
-                    .requires(Permissions.require("skieskits.command.resetcooldown", 4))
+                    .requires(Permissions.require("skieskits.command.resetcooldown", 2))
                     .suggests { _, builder ->
                         CommandSource.suggestMatching(ConfigManager.KITS.keys.stream(), builder)
                     }
                     .executes(Companion::resetSpecific)
                 )
-                .requires(Permissions.require("skieskits.command.resetcooldown", 4))
+                .requires(Permissions.require("skieskits.command.resetcooldown", 2))
                 .executes(Companion::resetAll)
             )
             .build()
@@ -64,7 +64,7 @@ class ResetCooldownCommand : SubCommand {
                     }
                 }
             }
-            
+
             ctx.source.sendMessage(Utils.deserializeText(
                 "<green>Reset cooldown for the kit <b>$kitId</b> for <b>${players.size}</b> player(s)!"
             ))

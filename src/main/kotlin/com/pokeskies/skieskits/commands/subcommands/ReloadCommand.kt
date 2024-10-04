@@ -12,7 +12,7 @@ import net.minecraft.server.command.ServerCommandSource
 class ReloadCommand : SubCommand {
     override fun build(): LiteralCommandNode<ServerCommandSource> {
         return CommandManager.literal("reload")
-            .requires(Permissions.require("skieskits.command.reload", 4))
+            .requires(Permissions.require("skieskits.command.reload", 2))
             .executes(Companion::reload)
             .build()
     }
