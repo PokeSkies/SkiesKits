@@ -18,7 +18,7 @@ class GiveCommand : SubCommand {
     override fun build(): LiteralCommandNode<CommandSourceStack> {
         return Commands.literal("give")
                 .then(Commands.argument("kit", StringArgumentType.word())
-                    .requires(Permissions.require("skieskits.command.give", 4))
+                    .requires(Permissions.require("skieskits.command.give", 2))
                     .suggests { _, builder ->
                         SharedSuggestionProvider.suggest(ConfigManager.KITS.keys.stream(), builder)
                     }

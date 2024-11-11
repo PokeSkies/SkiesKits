@@ -15,7 +15,7 @@ class PlaceholderRequirement(
     private val output: String = "",
     private val strict: Boolean = false
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun passesRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

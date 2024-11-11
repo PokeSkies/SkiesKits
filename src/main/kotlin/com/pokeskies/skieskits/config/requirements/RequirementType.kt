@@ -13,6 +13,7 @@ enum class RequirementType(val identifier: String, val clazz: Class<*>) {
     DIMENSION("dimension", DimensionRequirement::class.java),
     PLACEHOLDER("placeholder", PlaceholderRequirement::class.java),
     JAVASCRIPT("javascript", JavaScriptRequirement::class.java),
+    EMPTY_SLOTS("empty_slots", EmptySlotsRequirement::class.java),
 
     // Extensions
     PLAN_PLAYTIME("plan_playtime", PlanPlaytimeRequirement::class.java);

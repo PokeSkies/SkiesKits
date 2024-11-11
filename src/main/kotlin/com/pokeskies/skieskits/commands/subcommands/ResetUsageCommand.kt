@@ -18,13 +18,13 @@ class ResetUsageCommand : SubCommand {
         return Commands.literal("resetusage")
             .then(Commands.argument("player", EntityArgument.players())
                 .then(Commands.argument("kit", StringArgumentType.word())
-                    .requires(Permissions.require("skieskits.command.resetusage", 4))
+                    .requires(Permissions.require("skieskits.command.resetusage", 2))
                     .suggests { _, builder ->
                         SharedSuggestionProvider.suggest(ConfigManager.KITS.keys.stream(), builder)
                     }
                     .executes(Companion::resetSpecific)
                 )
-                .requires(Permissions.require("skieskits.command.resetusage", 4))
+                .requires(Permissions.require("skieskits.command.resetusage", 2))
                 .executes(Companion::resetAll)
             )
             .build()

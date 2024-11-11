@@ -15,7 +15,7 @@ abstract class Requirement(
     @SerializedName("success_actions")
     val successActions: Map<String, Action> = emptyMap()
 ) {
-    abstract fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean
+    abstract fun passesRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean
 
     open fun allowedComparisons(): List<ComparisonType> {
         return emptyList()

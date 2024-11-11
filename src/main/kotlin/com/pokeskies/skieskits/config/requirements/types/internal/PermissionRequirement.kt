@@ -16,7 +16,7 @@ class PermissionRequirement(
     successActions: Map<String, Action> = emptyMap(),
     private val permission: String = ""
 ) : Requirement(type, comparison, denyActions, successActions) {
-    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun passesRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

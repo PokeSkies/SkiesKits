@@ -13,7 +13,7 @@ class DimensionRequirement(
     comparison: ComparisonType = ComparisonType.EQUALS,
     private val id: String = ""
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun passesRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

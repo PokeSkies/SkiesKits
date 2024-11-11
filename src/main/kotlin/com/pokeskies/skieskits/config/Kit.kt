@@ -24,8 +24,10 @@ class Kit(
     val actions: ActionOptions = ActionOptions(),
 ) {
     fun claim(kitId: String, player: ServerPlayer, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
+        Utils.printDebug("Attempting to claim kit $kitId for player ${player.name.string}! BypassChecks=$bypassChecks, BypassRequirements=$bypassRequirements")
         if (SkiesKits.INSTANCE.storage == null) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+            Utils.printError("Storage system is null! Cannot claim kit $kitId for player ${player.name.string}!")
             return
         }
 
@@ -33,6 +35,7 @@ class Kit(
 
         if (userdata == null) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+            Utils.printError("Returned player data is null! Cannot claim kit $kitId for player ${player.name.string}!")
             return
         }
 
@@ -40,6 +43,7 @@ class Kit(
 
         if (!bypassChecks) {
             if (!kitData.checkUsage(maxUses)) {
+                Utils.printDebug("Player ${player.name.string} has reached the maximum uses for kit $kitId! Kit uses=${kitData.uses} and maxUses=$maxUses")
                 actions.executeUsesActions(player, kitId, this, kitData)
                 if (notifications) {
                     player.sendMessage(Utils.deserializeText(
@@ -53,6 +57,7 @@ class Kit(
             }
 
             if (!kitData.checkCooldown(cooldown)) {
+                Utils.printDebug("Player ${player.name.string} is still on cooldown for kit $kitId! Kit cooldown=${kitData.getTimeRemaining(cooldown)}")
                 actions.executeCooldownActions(player, kitId, this, kitData)
                 if (notifications) {
                     player.sendMessage(
@@ -70,7 +75,7 @@ class Kit(
         if (!bypassRequirements) {
             var success = true
             for ((id, requirement) in requirements.requirements) {
-                if (requirement.checkRequirements(player, kitId, this, kitData)) {
+                if (requirement.passesRequirements(player, kitId, this, kitData)) {
                     requirement.executeSuccessActions(player, kitId, this, kitData)
                 } else {
                     success = false
@@ -79,6 +84,7 @@ class Kit(
             }
 
             if (!success) {
+                Utils.printDebug("Player ${player.name.string} failed the requirements for kit $kitId!")
                 requirements.executeDenyActions(player, kitId, this, kitData)
                 actions.executeRequirementsActions(player, kitId, this, kitData)
                 if (notifications) {
@@ -101,12 +107,15 @@ class Kit(
 
         if (!SkiesKits.INSTANCE.storage!!.saveUser(player.uuid, userdata)) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
+            Utils.printError("Failed to save player data for ${player.name.string} while claiming kit $kitId!")
             return
         }
 
         for (item in items) {
             item.giveItem(player, kitId, this, kitData)
         }
+
+        Utils.printDebug("Player ${player.name.string} successfully claimed kit $kitId!")
 
         actions.executeClaimedActions(player, kitId, this, kitData)
 

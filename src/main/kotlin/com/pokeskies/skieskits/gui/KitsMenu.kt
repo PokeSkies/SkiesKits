@@ -66,7 +66,7 @@ class KitsMenu(
 
             var passed = true
             for ((id, requirement) in kit.requirements.requirements) {
-                if (requirement.checkRequirements(player, kitId, kit, kitData)) {
+                if (!requirement.passesRequirements(player, kitId, kit, kitData)) {
                     passed = false
                 }
             }

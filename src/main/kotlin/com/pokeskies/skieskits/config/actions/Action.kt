@@ -42,7 +42,7 @@ abstract class Action(
     fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (requirements != null) {
             for (requirement in requirements.requirements) {
-                if (!requirement.value.checkRequirements(player, kitId, kit, kitData)) {
+                if (!requirement.value.passesRequirements(player, kitId, kit, kitData)) {
                     return false
                 }
             }
