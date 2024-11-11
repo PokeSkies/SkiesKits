@@ -75,7 +75,7 @@ class Kit(
         if (!bypassRequirements) {
             var success = true
             for ((id, requirement) in requirements.requirements) {
-                if (requirement.checkRequirements(player, kitId, this, kitData)) {
+                if (requirement.passesRequirements(player, kitId, this, kitData)) {
                     requirement.executeSuccessActions(player, kitId, this, kitData)
                 } else {
                     success = false

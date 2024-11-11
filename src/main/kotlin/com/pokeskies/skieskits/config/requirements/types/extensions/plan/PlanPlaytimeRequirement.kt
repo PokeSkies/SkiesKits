@@ -14,7 +14,7 @@ class PlanPlaytimeRequirement(
     comparison: ComparisonType = ComparisonType.EQUALS,
     private val time: Long = 0
 ) : Requirement(type, comparison) {
-    override fun checkRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun passesRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 
