@@ -7,8 +7,8 @@ import com.pokeskies.skieskits.utils.SubCommand
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
-import net.minecraft.commands.Commands
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 
 class DebugCommand : SubCommand {
     override fun build(): LiteralCommandNode<CommandSourceStack> {

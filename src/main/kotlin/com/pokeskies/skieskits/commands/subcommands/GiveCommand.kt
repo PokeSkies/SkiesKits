@@ -9,10 +9,10 @@ import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.commands.arguments.EntityArgument
-import net.minecraft.commands.Commands
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
 import net.minecraft.commands.SharedSuggestionProvider
+import net.minecraft.commands.arguments.EntityArgument
 
 class GiveCommand : SubCommand {
     override fun build(): LiteralCommandNode<CommandSourceStack> {

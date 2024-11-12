@@ -6,14 +6,14 @@ import com.pokeskies.skieskits.placeholders.IPlaceholderService
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.placeholders.api.PlaceholderContext
 import eu.pb4.placeholders.api.Placeholders
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.text.Text
 
 class PlaceholderAPIService : IPlaceholderService {
     init {
         Utils.printInfo("PlaceholderAPI mod found! Enabling placeholder integration...")
     }
     override fun parsePlaceholders(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
-        return Placeholders.parseText(Text.of(text), PlaceholderContext.of(player)).string
+        return Placeholders.parseText(Component.literal(text), PlaceholderContext.of(player)).string
     }
 }

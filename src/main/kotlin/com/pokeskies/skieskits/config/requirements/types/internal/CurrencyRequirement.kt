@@ -38,7 +38,7 @@ class CurrencyRequirement(
     }
 
     override fun allowedComparisons(): List<ComparisonType> {
-        return ComparisonType.values().toList()
+        return ComparisonType.entries
     }
 
     override fun toString(): String {

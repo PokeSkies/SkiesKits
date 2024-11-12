@@ -1,16 +1,19 @@
 package com.pokeskies.skieskits.config.requirements.types.internal
 
+import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.requirements.ComparisonType
 import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
+import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
+import kotlin.jvm.optionals.getOrNull
 
 class ItemRequirement(
     type: RequirementType = RequirementType.ITEM,
@@ -65,7 +68,7 @@ class ItemRequirement(
         }
 
         if (strict && nbt != null) {
-            val checkNBT = checkItem.nbt ?: return false
+            val checkNBT = DataComponentPatch.CODEC.encodeStart(SkiesKits.INSTANCE.nbtOpts, checkItem.componentsPatch).result().getOrNull() ?: return false
 
             if (checkNBT != nbt)
                 return false
@@ -75,7 +78,7 @@ class ItemRequirement(
     }
 
     override fun allowedComparisons(): List<ComparisonType> {
-        return ComparisonType.values().toList()
+        return ComparisonType.entries
     }
 
     override fun toString(): String {

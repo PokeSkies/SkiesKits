@@ -27,6 +27,9 @@ import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.platform.fabric.FabricServerAudiences
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.Tag
+import net.minecraft.resources.RegistryOps
 import net.minecraft.server.MinecraftServer
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item
@@ -53,7 +56,8 @@ class SkiesKits : ModInitializer {
     lateinit var placeholderManager: PlaceholderManager
 
     var adventure: FabricServerAudiences? = null
-    var server: MinecraftServer? = null
+    lateinit var server: MinecraftServer
+    lateinit var nbtOpts: RegistryOps<Tag>
 
     lateinit var graalEngine: Engine
 
@@ -89,13 +93,14 @@ class SkiesKits : ModInitializer {
             .option("engine.WarnInterpreterOnly", "false")
             .build()
 
-        ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer? ->
+        ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer ->
             this.adventure = FabricServerAudiences.of(
-                server!!
+                server
             )
             this.server = server
+            this.nbtOpts = server.registryAccess().createSerializationContext(NbtOps.INSTANCE)
         })
-        ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer? ->
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer ->
             this.adventure = null
             this.storage?.close()
         })

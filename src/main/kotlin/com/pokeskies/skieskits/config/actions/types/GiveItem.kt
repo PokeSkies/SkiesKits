@@ -1,11 +1,13 @@
 package com.pokeskies.skieskits.config.actions.types
 
+import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.config.actions.ActionType
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
+import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.Item
@@ -25,7 +27,9 @@ class GiveItem(
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         val itemStack = ItemStack(item, amount)
         if (nbt != null) {
-            itemStack.nbt = nbt
+            DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbt).result().ifPresent { result ->
+                itemStack.applyComponents(result.first)
+            }
         }
 
         player.addItem(itemStack)

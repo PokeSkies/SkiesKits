@@ -18,6 +18,7 @@ val minecraftVersion = project.properties["minecraft_version"].toString()
 repositories {
     mavenCentral()
     maven( "https://jitpack.io")
+    maven("https://maven.parchmentmc.org")
     maven {
         name = "Modrinth"
         url = uri("https://api.modrinth.com/maven")
@@ -53,29 +54,33 @@ dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
     mappings(loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-$minecraftVersion:${project.properties["parchment_version"]}")
+        // TODO: Fix hardcoded minecraft version once Parchment updates
+        parchment("org.parchmentmc.data:parchment-1.21:${project.properties["parchment_version"]}")
     })
 
     modImplementation("net.fabricmc:fabric-loader:${project.properties["loader_version"].toString()}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.properties["fabric_kotlin_version"].toString()}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.properties["fabric_version"].toString()}")
 
-    modImplementation(include("net.kyori:adventure-platform-fabric:5.14.1")!!)
+    modImplementation(include("net.kyori:adventure-platform-fabric:5.14.2")!!)
+
     modImplementation("me.lucko:fabric-permissions-api:0.3.1")
 
     modImplementation("eu.pb4:placeholder-api:2.4.1+1.21")
 
+    modImplementation("ca.landonjw.gooeylibs:fabric-api-repack:3.1.0-1.21.1-SNAPSHOT@jar")
+
     modImplementation("io.github.miniplaceholders:miniplaceholders-api:2.2.3")
     modImplementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
 
-    modImplementation("net.impactdev.impactor:common:5.2.4+1.20.1-SNAPSHOT")
-    modImplementation("net.impactdev.impactor.api:economy:5.2.4-SNAPSHOT")
-    modImplementation("net.impactdev.impactor.api:text:5.2.4-SNAPSHOT")
+    modImplementation("net.impactdev.impactor:common:5.3.0+1.21.1-SNAPSHOT")
+    modImplementation("net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT")
+    modImplementation("net.impactdev.impactor.api:text:5.3.0-SNAPSHOT")
 
     implementation(include("org.graalvm.sdk:graal-sdk:22.3.0")!!)
     implementation(include("org.graalvm.truffle:truffle-api:22.3.0")!!)
 
-    modImplementation("com.github.plan-player-analytics:Plan:5.6.2614")
+    modImplementation("com.github.plan-player-analytics:Plan:5.6.2883")
 
     implementation(include("org.mongodb:mongodb-driver-sync:4.11.0")!!)
     implementation(include("org.mongodb:mongodb-driver-core:4.11.0")!!)
