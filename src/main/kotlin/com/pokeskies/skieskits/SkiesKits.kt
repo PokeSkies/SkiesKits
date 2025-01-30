@@ -142,7 +142,7 @@ class SkiesKits : ModInitializer {
         try {
             Files.createDirectories(configDir.toPath())
             if (file.exists()) {
-                FileReader(file).use { reader ->
+                FileReader(file, Charsets.UTF_8).use { reader ->
                     val jsonReader = JsonReader(reader)
                     value = gsonPretty.fromJson(jsonReader, default::class.java)
                 }
