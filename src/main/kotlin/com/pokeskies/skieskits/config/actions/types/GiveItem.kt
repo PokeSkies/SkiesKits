@@ -1,16 +1,18 @@
 package com.pokeskies.skieskits.config.actions.types
 
+import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.config.actions.ActionType
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.core.component.DataComponentPatch
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
 
 class GiveItem(
     type: ActionType = ActionType.GIVE_XP,
@@ -19,16 +21,18 @@ class GiveItem(
     requirements: RequirementOptions? = RequirementOptions(),
     val item: Item = Items.BARRIER,
     val amount: Int = 1,
-    val nbt: NbtCompound? = null
+    val nbt: CompoundTag? = null
 ) : Action(type, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    override fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         val itemStack = ItemStack(item, amount)
         if (nbt != null) {
-            itemStack.nbt = nbt
+            DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbt).result().ifPresent { result ->
+                itemStack.applyComponents(result.first)
+            }
         }
 
-        player.giveItemStack(itemStack)
+        player.addItem(itemStack)
     }
 
     override fun toString(): String {

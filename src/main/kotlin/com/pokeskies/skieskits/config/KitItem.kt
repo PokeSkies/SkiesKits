@@ -1,51 +1,58 @@
 package com.pokeskies.skieskits.config
 
+import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.entity.ItemEntity
-import net.minecraft.item.Item
-import net.minecraft.item.ItemStack
-import net.minecraft.item.Items
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.nbt.NbtList
-import net.minecraft.nbt.NbtString
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
+import net.minecraft.core.component.DataComponentPatch
+import net.minecraft.core.component.DataComponents
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Items
+import net.minecraft.world.item.component.ItemLore
 
 class KitItem(
     val item: Item = Items.AIR,
     val amount: Int = 1,
     val name: String? = null,
     val lore: List<String> = emptyList(),
-    val nbt: NbtCompound? = null
+    val nbt: CompoundTag? = null
 ) {
-    fun giveItem(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
+    fun giveItem(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         val itemStack = ItemStack(item)
 
         if (nbt != null) {
-            itemStack.nbt = nbt
+            DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbt).result().ifPresent { result ->
+                itemStack.applyComponents(result.first)
+            }
         }
 
+        val dataComponents = DataComponentPatch.builder()
+
         if (name != null) {
-            itemStack.setCustomName(Utils.deserializeText(Utils.parsePlaceholders(player, name, kitId, kit, kitData)))
+            dataComponents.set(DataComponents.ITEM_NAME, Utils.deserializeText(Utils.parsePlaceholders(player, name, kitId, kit, kitData)))
         }
 
         if (lore.isNotEmpty()) {
-            val displayNBT = itemStack.getOrCreateSubNbt(ItemStack.DISPLAY_KEY)
-            val nbtLore = NbtList()
-            for (line in lore) {
-                nbtLore.add(NbtString.of(Text.Serializer.toJson(
-                    Utils.deserializeText(Utils.parsePlaceholders(player, line, kitId, kit, kitData))
-                )))
+            val parsedLore: MutableList<String> = mutableListOf()
+            for (line in lore.stream().map { Utils.parsePlaceholders(player, it, kitId, kit, kitData) }.toList()) {
+                if (line.contains("\n")) {
+                    line.split("\n").forEach { parsedLore.add(it) }
+                } else {
+                    parsedLore.add(line)
+                }
             }
-            displayNBT.put(ItemStack.LORE_KEY, nbtLore)
-            itemStack.setSubNbt(ItemStack.DISPLAY_KEY, displayNBT)
+            dataComponents.set(DataComponents.LORE, ItemLore(parsedLore.stream().map { Utils.deserializeText(it) }.toList()))
         }
+
+        itemStack.applyComponents(dataComponents.build())
 
         itemStack.count = amount
 
-        if (!player.giveItemStack(itemStack)) {
-            player.world.spawnEntity(ItemEntity(player.world, player.x, player.y, player.z, itemStack))
+        if (!player.addItem(itemStack)) {
+            player.serverLevel().addFreshEntity(ItemEntity(player.serverLevel(), player.x, player.y, player.z, itemStack))
         }
     }
 }

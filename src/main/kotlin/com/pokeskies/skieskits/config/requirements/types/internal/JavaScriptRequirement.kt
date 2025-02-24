@@ -8,7 +8,7 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 import org.graalvm.polyglot.Context
 import org.graalvm.polyglot.Value
 
@@ -17,7 +17,7 @@ class JavaScriptRequirement(
     comparison: ComparisonType = ComparisonType.EQUALS,
     private val expression: String = ""
 ) : Requirement(type, comparison) {
-    override fun passesRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun passesRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 

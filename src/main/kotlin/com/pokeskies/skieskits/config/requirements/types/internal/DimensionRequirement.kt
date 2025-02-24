@@ -6,20 +6,20 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
+import net.minecraft.server.level.ServerPlayer
 
 class DimensionRequirement(
     type: RequirementType = RequirementType.DIMENSION,
     comparison: ComparisonType = ComparisonType.EQUALS,
     private val id: String = ""
 ) : Requirement(type, comparison) {
-    override fun passesRequirements(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData): Boolean {
+    override fun passesRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (!checkComparison())
             return false
 
         Utils.printDebug("Checking a ${type?.identifier} Requirement with id='$id': $this")
 
-        val value = id.equals(player.world.registryKey.value.toString(), true)
+        val value = id.equals(player.serverLevel().dimension().location().toString(), true)
         return if (comparison == ComparisonType.NOT_EQUALS) !value else value
     }
 

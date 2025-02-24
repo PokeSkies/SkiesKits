@@ -12,7 +12,7 @@ enum class StorageType(val identifier: String) {
 
     companion object {
         fun valueOfAnyCase(identifier: String): StorageType? {
-            for (type in values()) {
+            for (type in entries) {
                 if (identifier.equals(type.identifier, true)) return type
             }
             return null

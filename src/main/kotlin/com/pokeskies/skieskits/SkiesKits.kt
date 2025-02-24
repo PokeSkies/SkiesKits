@@ -25,11 +25,14 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.ServerSt
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
 import net.kyori.adventure.platform.fabric.FabricServerAudiences
-import net.minecraft.item.Item
-import net.minecraft.nbt.NbtCompound
-import net.minecraft.registry.Registries
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.NbtOps
+import net.minecraft.nbt.Tag
+import net.minecraft.resources.RegistryOps
 import net.minecraft.server.MinecraftServer
-import net.minecraft.sound.SoundEvent
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.world.item.Item
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.graalvm.polyglot.Engine
@@ -53,7 +56,8 @@ class SkiesKits : ModInitializer {
     lateinit var placeholderManager: PlaceholderManager
 
     var adventure: FabricServerAudiences? = null
-    var server: MinecraftServer? = null
+    lateinit var server: MinecraftServer
+    lateinit var nbtOpts: RegistryOps<Tag>
 
     lateinit var graalEngine: Engine
 
@@ -63,9 +67,9 @@ class SkiesKits : ModInitializer {
         .registerTypeAdapter(ComparisonType::class.java, ComparisonType.ComparisonTypeAdaptor())
         .registerTypeAdapter(EconomyType::class.java, EconomyType.EconomyTypeAdaptor())
         .registerTypeAdapter(StorageType::class.java, StorageType.StorageTypeAdaptor())
-        .registerTypeHierarchyAdapter(Item::class.java, Utils.RegistrySerializer(Registries.ITEM))
-        .registerTypeHierarchyAdapter(SoundEvent::class.java, Utils.RegistrySerializer(Registries.SOUND_EVENT))
-        .registerTypeHierarchyAdapter(NbtCompound::class.java, Utils.CodecSerializer(NbtCompound.CODEC))
+        .registerTypeHierarchyAdapter(Item::class.java, Utils.RegistrySerializer(BuiltInRegistries.ITEM))
+        .registerTypeHierarchyAdapter(SoundEvent::class.java, Utils.RegistrySerializer(BuiltInRegistries.SOUND_EVENT))
+        .registerTypeHierarchyAdapter(CompoundTag::class.java, Utils.CodecSerializer(CompoundTag.CODEC))
         .create()
 
     var gsonPretty: Gson = gson.newBuilder().setPrettyPrinting().create()
@@ -89,13 +93,14 @@ class SkiesKits : ModInitializer {
             .option("engine.WarnInterpreterOnly", "false")
             .build()
 
-        ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer? ->
+        ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer ->
             this.adventure = FabricServerAudiences.of(
-                server!!
+                server
             )
             this.server = server
+            this.nbtOpts = server.registryAccess().createSerializationContext(NbtOps.INSTANCE)
         })
-        ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer? ->
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer ->
             this.adventure = null
             this.storage?.close()
         })
@@ -109,7 +114,7 @@ class SkiesKits : ModInitializer {
             Task.builder().execute { ctx ->
                 val player = event.player
                 Utils.printDebug("Player ${player.name.string} joined the server! Checking ${ConfigManager.KITS.size} kits...")
-                if (!player.isDisconnected) {
+                if (!player.hasDisconnected()) {
                     for ((id, kit) in ConfigManager.KITS) {
                         Utils.printDebug("Checking kit $id! Kit onJoin=${kit.onJoin}, Player hasPermission=${kit.hasPermission(player)}")
                         if (kit.onJoin && kit.hasPermission(player)) {

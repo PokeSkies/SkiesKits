@@ -9,11 +9,11 @@ import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
-import net.minecraft.server.network.ServerPlayerEntity
-import net.minecraft.text.Text
+import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerPlayer
 
 class KitsMenu(
-    private val player: ServerPlayerEntity
+    private val player: ServerPlayer
 ) : UpdateEmitter<Page?>(), Page {
     private val config = SkiesKits.INSTANCE.configManager.menuConfig
 
@@ -101,7 +101,7 @@ class KitsMenu(
         return template
     }
 
-    override fun getTitle(): Text {
+    override fun getTitle(): Component {
         return Utils.deserializeText(Utils.parsePlaceholders(player, config.title, null, null, null))
     }
 }

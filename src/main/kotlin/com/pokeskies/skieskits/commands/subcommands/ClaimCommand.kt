@@ -8,28 +8,28 @@ import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.command.CommandSource
-import net.minecraft.server.command.CommandManager
-import net.minecraft.server.command.ServerCommandSource
+import net.minecraft.commands.CommandSourceStack
+import net.minecraft.commands.Commands
+import net.minecraft.commands.SharedSuggestionProvider
 
 class ClaimCommand : SubCommand {
-    override fun build(): LiteralCommandNode<ServerCommandSource> {
-        return CommandManager.literal("claim")
-            .then(CommandManager.argument("kit", StringArgumentType.word())
+    override fun build(): LiteralCommandNode<CommandSourceStack> {
+        return Commands.literal("claim")
+            .then(Commands.argument("kit", StringArgumentType.word())
                 .requires(Permissions.require("skieskits.command.claim", 2))
                 .suggests { ctx, builder ->
-                    CommandSource.suggestMatching(ConfigManager.KITS.filter { entry ->
-                        return@filter !(ctx.source.isExecutedByPlayer && !entry.value.hasPermission(ctx.source.player!!))
+                    SharedSuggestionProvider.suggest(ConfigManager.KITS.filter { entry ->
+                        return@filter !(ctx.source.isPlayer && !entry.value.hasPermission(ctx.source.player!!))
                     }.keys, builder)
                 }
-                .requires { obj: ServerCommandSource -> obj.isExecutedByPlayer }
+                .requires { obj: CommandSourceStack -> obj.isPlayer }
                 .executes(Companion::claim)
             )
             .build()
     }
 
     companion object {
-        fun claim(ctx: CommandContext<ServerCommandSource>): Int {
+        fun claim(ctx: CommandContext<CommandSourceStack>): Int {
             val player = ctx.source.player
             if (player == null) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must be a player to use this command!"))
