@@ -1,5 +1,6 @@
 package com.pokeskies.skieskits.config.actions.types
 
+import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
@@ -14,7 +15,9 @@ class CommandPlayer(
     delay: Long = 0,
     chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
-    private val commands: List<String> = emptyList()
+    private val commands: List<String> = emptyList(),
+    @SerializedName("permission_level")
+    private val permissionLevel: Int? = null
 ) : Action(type, delay, chance, requirements) {
     override fun executeAction(player: ServerPlayerEntity, kitId: String, kit: Kit, kitData: KitData) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
@@ -23,9 +26,15 @@ class CommandPlayer(
             return
         }
 
+        var source = player.commandSource
+
+        if (permissionLevel != null) {
+            source = source.withLevel(permissionLevel)
+        }
+
         for (command in commands) {
             SkiesKits.INSTANCE.server?.commandManager?.executeWithPrefix(
-                player.commandSource,
+                source,
                 Utils.parsePlaceholders(player, command, kitId, kit, kitData)
             )
         }
