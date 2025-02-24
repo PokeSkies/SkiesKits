@@ -22,14 +22,14 @@ class CommandPlayer(
     override fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
 
-        var source = player.commandSource
+        var source = player.createCommandSourceStack()
 
         if (permissionLevel != null) {
-            source = source.withLevel(permissionLevel)
+            source = source.withPermission(permissionLevel)
         }
 
         for (command in commands) {
-            SkiesKits.INSTANCE.server.commandManager?.executeWithPrefix(
+            SkiesKits.INSTANCE.server.commands?.performPrefixedCommand(
                 source,
                 Utils.parsePlaceholders(player, command, kitId, kit, kitData)
             )
