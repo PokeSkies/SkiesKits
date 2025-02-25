@@ -31,7 +31,6 @@ class ConfigManager(private val configDir: File) {
         copyDefaults()
         config = SkiesKits.INSTANCE.loadFile("config.json", MainConfig())
         menuConfig = SkiesKits.INSTANCE.loadFile("menu.json", KitMenuConfig())
-        loadKits()
     }
 
     fun copyDefaults() {
@@ -76,7 +75,7 @@ class ConfigManager(private val configDir: File) {
         }
     }
 
-    private fun loadKits() {
+    fun loadKits() {
         KITS.clear()
 
         val dir = configDir.resolve("kits")

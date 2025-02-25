@@ -100,6 +100,9 @@ class SkiesKits : ModInitializer {
             this.server = server
             this.nbtOpts = server.registryAccess().createSerializationContext(NbtOps.INSTANCE)
         })
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
+            this.configManager.loadKits()
+        })
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer ->
             this.adventure = null
             this.storage?.close()
@@ -139,6 +142,7 @@ class SkiesKits : ModInitializer {
             this.storage = null
         }
         this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
+        this.configManager.loadKits()
     }
 
     fun <T : Any> loadFile(filename: String, default: T, create: Boolean = false): T {
