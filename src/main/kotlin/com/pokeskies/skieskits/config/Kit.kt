@@ -134,7 +134,7 @@ class Kit(
     }
 
     fun hasPermission(player: ServerPlayer): Boolean {
-        return if (!permission.isNullOrEmpty()) Permissions.check(player, permission) else true
+        return if (!permission.isNullOrEmpty()) Permissions.check(player, permission, 2) else true
     }
 
     override fun toString(): String {
