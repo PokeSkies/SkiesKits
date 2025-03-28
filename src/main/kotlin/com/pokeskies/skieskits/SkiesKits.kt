@@ -159,8 +159,8 @@ class SkiesKits : ModInitializer {
         return value
     }
 
-    fun <T> saveFile(filename: String, `object`: T): Boolean {
-        val file = File(configDir, filename)
+    fun <T> saveFile(filename: String, `object`: T, path: String? = null): Boolean {
+        val file = File(if (path.isNullOrEmpty()) configDir else File(configDir, path), filename)
         try {
             FileWriter(file).use { fileWriter ->
                 fileWriter.write(gsonPretty.toJson(`object`))
