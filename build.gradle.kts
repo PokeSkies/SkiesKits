@@ -95,7 +95,7 @@ dependencies {
     implementation(include("com.h2database:h2:2.2.224")!!)
     implementation(include("com.mysql:mysql-connector-j:8.2.0")!!)
 
-    modImplementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
+    compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 tasks.processResources {
