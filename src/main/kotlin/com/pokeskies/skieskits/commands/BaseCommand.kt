@@ -42,6 +42,7 @@ class BaseCommand {
             GiveCommand().build(),
             ResetUsageCommand().build(),
             ResetCooldownCommand().build(),
+            CreateCommand().build(),
         )
 
         rootCommands.forEach { root ->

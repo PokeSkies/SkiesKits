@@ -71,7 +71,7 @@ object Utils {
             return parsed
         }
         override fun serialize(src: T, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-            return JsonPrimitive(registry.getId(src).toString())
+            return JsonPrimitive(registry.getKey(src).toString())
         }
     }
 
