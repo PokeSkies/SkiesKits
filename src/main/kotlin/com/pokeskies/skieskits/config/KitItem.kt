@@ -1,5 +1,6 @@
 package com.pokeskies.skieskits.config
 
+import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
@@ -18,13 +19,14 @@ class KitItem(
     val amount: Int = 1,
     val name: String? = null,
     val lore: List<String> = emptyList(),
-    val nbt: CompoundTag? = null
+    @SerializedName("components", alternate = ["nbt"])
+    val components: CompoundTag? = null
 ) {
     fun giveItem(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         val itemStack = ItemStack(item)
 
-        if (nbt != null) {
-            DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbt).result().ifPresent { result ->
+        if (components != null) {
+            DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, components).result().ifPresent { result ->
                 itemStack.applyComponents(result.first)
             }
         }
