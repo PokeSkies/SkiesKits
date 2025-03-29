@@ -60,9 +60,10 @@ dependencies {
     modImplementation("io.github.miniplaceholders:miniplaceholders-api:2.2.2")
     modImplementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.2")
 
-    modImplementation("net.impactdev.impactor:common:5.1.1-SNAPSHOT")
-    modImplementation("net.impactdev.impactor.api:economy:5.1.1-SNAPSHOT")
-    modImplementation("net.impactdev.impactor.api:text:5.1.1-SNAPSHOT")
+    modImplementation("net.impactdev.impactor:common:5.1.1+1.20.1:dev-slim@jar")
+    modImplementation("net.impactdev.impactor.api:economy:5.1.1+1.20.1")
+    modImplementation("net.impactdev.impactor.api:text:5.1.1+1.20.1")
+    modImplementation("net.impactdev.impactor.api:players:5.1.1+1.20.1")
 
     implementation(include("org.graalvm.sdk:graal-sdk:22.3.0")!!)
     implementation(include("org.graalvm.truffle:truffle-api:22.3.0")!!)

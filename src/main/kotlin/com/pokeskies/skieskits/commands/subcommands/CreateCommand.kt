@@ -10,16 +10,13 @@ import com.pokeskies.skieskits.config.KitItem
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
-import net.minecraft.commands.CommandSourceStack
-import net.minecraft.commands.Commands
-import net.minecraft.core.component.DataComponentPatch
-import net.minecraft.nbt.CompoundTag
-import kotlin.jvm.optionals.getOrNull
+import net.minecraft.server.command.CommandManager
+import net.minecraft.server.command.ServerCommandSource
 
 class CreateCommand : SubCommand {
-    override fun build(): LiteralCommandNode<CommandSourceStack> {
-        return Commands.literal("create")
-            .then(Commands.argument("name", StringArgumentType.word())
+    override fun build(): LiteralCommandNode<ServerCommandSource> {
+        return CommandManager.literal("create")
+            .then(CommandManager.argument("name", StringArgumentType.word())
                 .requires(Permissions.require("skieskits.command.create", 2))
                 .executes(Companion::create)
             )
@@ -27,7 +24,7 @@ class CreateCommand : SubCommand {
     }
 
     companion object {
-        fun create(ctx: CommandContext<CommandSourceStack>): Int {
+        fun create(ctx: CommandContext<ServerCommandSource>): Int {
             val player = ctx.source.player
             if (player == null) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must be a player to use this command!"))
@@ -45,15 +42,14 @@ class CreateCommand : SubCommand {
                 return 0
             }
 
-            val items = player.inventory.items
+            val items = player.inventory.main
                 .filter {
                     !it.isEmpty
                 }.map {
-                    val dataResult = DataComponentPatch.CODEC.encodeStart(SkiesKits.INSTANCE.nbtOpts, it.componentsPatch)
                     KitItem(
                         item = it.item,
                         amount = it.count,
-                        components = if (dataResult.isSuccess) dataResult.result().getOrNull() as CompoundTag else null,
+                        nbt = it.nbt,
                     )
                 }
 
