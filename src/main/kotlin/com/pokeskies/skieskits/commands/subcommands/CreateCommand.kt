@@ -13,6 +13,7 @@ import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.commands.Commands
 import net.minecraft.core.component.DataComponentPatch
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import kotlin.jvm.optionals.getOrNull
 
@@ -51,7 +52,7 @@ class CreateCommand : SubCommand {
                 }.map {
                     val dataResult = DataComponentPatch.CODEC.encodeStart(SkiesKits.INSTANCE.nbtOpts, it.componentsPatch)
                     KitItem(
-                        item = it.item,
+                        item = BuiltInRegistries.ITEM.getKey(it.item).asString(),
                         amount = it.count,
                         components = if (dataResult.isSuccess) dataResult.result().getOrNull() as CompoundTag else null,
                     )
