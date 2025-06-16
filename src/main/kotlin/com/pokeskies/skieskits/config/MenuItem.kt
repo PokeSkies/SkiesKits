@@ -6,23 +6,28 @@ import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ItemLore
 
 class MenuItem(
     val slots: List<Int> = emptyList(),
-    val item: Item = Items.AIR,
+    val item: String = "minecraft:air",
     val amount: Int = 1,
     val name: String? = null,
     val lore: List<String> = emptyList(),
     val nbt: CompoundTag? = null
 ) {
     fun createButton(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?): GooeyButton.Builder {
-        val stack = ItemStack(item, amount)
+        if (item.isEmpty()) {
+            Utils.printError("Menu item $item is empty, cannot add to menu.")
+            return GooeyButton.builder().display(ItemStack.EMPTY)
+        }
+
+        val stack = ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item)), amount)
 
         if (nbt != null) {
             DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbt).result().ifPresent { result ->

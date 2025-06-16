@@ -10,7 +10,6 @@ class MainConfig(
     var storage: Storage = Storage(),
     val messages: Messages = Messages()
 ) {
-
     class Storage(
         val type: StorageType = StorageType.JSON,
         val host: String = "",

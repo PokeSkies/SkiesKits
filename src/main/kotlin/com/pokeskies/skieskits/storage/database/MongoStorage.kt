@@ -26,7 +26,7 @@ import org.bson.codecs.pojo.PojoCodecProvider
 import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
-
+import java.util.concurrent.TimeUnit
 
 class MongoStorage(config: MainConfig.Storage) : IStorage {
     private var mongoClient: MongoClient? = null
@@ -37,10 +37,19 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         try {
             val credential = MongoCredential.createCredential(
                 config.username,
-                config.database,
+                "admin",
                 config.password.toCharArray()
             )
             var settings = MongoClientSettings.builder()
+                .applyToSocketSettings { socketSettingsBuilder ->
+                    socketSettingsBuilder
+                        .connectTimeout(60, TimeUnit.SECONDS)
+                        .readTimeout(120, TimeUnit.SECONDS)
+                        .build()
+                }
+                .applyToClusterSettings { clusterSettingsBuilder ->
+                    clusterSettingsBuilder.serverSelectionTimeout(5, TimeUnit.SECONDS)
+                }
                 .uuidRepresentation(UuidRepresentation.STANDARD)
 
             settings = if (config.urlOverride.isNotEmpty()) {

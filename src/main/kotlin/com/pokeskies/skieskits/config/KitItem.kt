@@ -6,16 +6,16 @@ import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponents
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.ItemLore
 
 class KitItem(
-    val item: Item = Items.AIR,
+    val item: String = "minecraft:air",
     val amount: Int = 1,
     val name: String? = null,
     val lore: List<String> = emptyList(),
@@ -23,7 +23,12 @@ class KitItem(
     val components: CompoundTag? = null
 ) {
     fun giveItem(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
-        val itemStack = ItemStack(item)
+        if (item.isEmpty()) {
+            Utils.printError("Item for kit $kitId is empty, cannot give item to player ${player.name.string}.")
+            return
+        }
+
+        val itemStack = ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item)))
 
         if (components != null) {
             DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, components).result().ifPresent { result ->
