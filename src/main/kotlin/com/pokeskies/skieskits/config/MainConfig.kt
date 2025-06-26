@@ -6,6 +6,7 @@ import com.pokeskies.skieskits.storage.StorageType
 
 class MainConfig(
     var debug: Boolean = false,
+    var commands: List<String> = listOf("skieskits", "kits", "kit"),
     var economy: EconomyType = EconomyType.IMPACTOR,
     var storage: Storage = Storage(),
     val messages: Messages = Messages()
@@ -72,6 +73,6 @@ class MainConfig(
     }
 
     override fun toString(): String {
-        return "MainConfig(debug=$debug, economy=$economy, storage=$storage, messages=$messages)"
+        return "MainConfig(debug=$debug, commands=$commands, economy=$economy, storage=$storage, messages=$messages)"
     }
 }

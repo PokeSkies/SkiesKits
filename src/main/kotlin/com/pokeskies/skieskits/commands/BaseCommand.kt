@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
+import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.commands.subcommands.*
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.gui.KitsMenu
@@ -15,10 +16,8 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.SharedSuggestionProvider
 
 class BaseCommand {
-    private val aliases = listOf("skieskits", "kits", "kit")
-
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = aliases.map {
+        val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = SkiesKits.INSTANCE.configManager.config.commands.map {
             Commands.literal(it)
                 .requires(Permissions.require("skieskits.command.base", 2))
                 .then(Commands.argument("kit", StringArgumentType.word())
