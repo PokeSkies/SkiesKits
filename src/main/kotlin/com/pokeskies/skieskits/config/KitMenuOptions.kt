@@ -1,8 +1,11 @@
 package com.pokeskies.skieskits.config
 
+import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import com.pokeskies.skieskits.utils.FlexibleListAdaptorFactory
 
 class KitMenuOptions(
+    @JsonAdapter(FlexibleListAdaptorFactory::class)
     val slots: List<Int> = emptyList(),
     val available: MenuItem = MenuItem(),
     @SerializedName("on_cooldown")

@@ -30,7 +30,7 @@ class BaseCommand {
                     .requires { obj: CommandSourceStack -> obj.isPlayer }
                     .executes(ClaimCommand::claim)
                 )
-                .executes(Companion::openMenu)
+                .executes(Companion::execute)
                 .build()
         }
 
@@ -51,11 +51,11 @@ class BaseCommand {
     }
 
     companion object {
-        fun openMenu(ctx: CommandContext<CommandSourceStack>): Int {
+        fun execute(ctx: CommandContext<CommandSourceStack>): Int {
             val player = ctx.source.player
             if (player == null) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>You must be a player to run this command!"))
-                return 1
+                return 0
             }
 
             UIManager.openUIForcefully(player, KitsMenu(player))
