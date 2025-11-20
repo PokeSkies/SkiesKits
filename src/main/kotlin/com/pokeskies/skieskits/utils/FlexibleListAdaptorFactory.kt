@@ -11,8 +11,6 @@ import com.google.gson.stream.MalformedJsonException
 import java.io.IOException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import kotlin.jvm.Throws
-import kotlin.jvm.java
 
 // Sourced and modified from https://stackoverflow.com/questions/43412261/make-gson-accept-single-objects-where-it-expects-arrays
 internal class FlexibleListAdaptorFactory<E> private constructor() : TypeAdapterFactory {
@@ -35,8 +33,7 @@ internal class FlexibleListAdaptorFactory<E> private constructor() : TypeAdapter
                 // No, raw
                 return Any::class.java
             }
-            val parameterizedType = type as ParameterizedType
-            return parameterizedType.actualTypeArguments[0]
+            return type.actualTypeArguments[0]
         }
 
         private class ListLikeAdaptorFactory<E> constructor(elementTypeAdapter: TypeAdapter<E>) : TypeAdapter<List<E>?>() {
@@ -83,7 +80,6 @@ internal class FlexibleListAdaptorFactory<E> private constructor() : TypeAdapter
 
                     JsonToken.NULL -> throw kotlin.AssertionError("Must never happen: check if the type adapter configured with .nullSafe()")
                     JsonToken.NAME, JsonToken.END_ARRAY, JsonToken.END_OBJECT, JsonToken.END_DOCUMENT -> throw MalformedJsonException("Unexpected token: $token")
-                    else -> throw kotlin.AssertionError("Must never happen: $token")
                 }
                 return list
             }

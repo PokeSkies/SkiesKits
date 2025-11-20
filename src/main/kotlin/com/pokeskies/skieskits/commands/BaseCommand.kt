@@ -1,6 +1,5 @@
 package com.pokeskies.skieskits.commands
 
-import ca.landonjw.gooeylibs2.api.UIManager
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
@@ -58,7 +57,7 @@ class BaseCommand {
                 return 0
             }
 
-            UIManager.openUIForcefully(player, KitsMenu(player))
+            KitsMenu(player).open()
             return 1
         }
     }

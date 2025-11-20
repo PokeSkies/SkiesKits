@@ -1,9 +1,9 @@
 package com.pokeskies.skieskits.config.actions
 
-import ca.landonjw.gooeylibs2.api.tasks.Task
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
+import com.pokeskies.skieskits.utils.Scheduler
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.server.level.ServerPlayer
 import kotlin.random.Random
@@ -29,12 +29,11 @@ abstract class Action(
             executeAction(player, kitId, kit, kitData)
             return
         }
-        Utils.printDebug("Delay found for $type Action. Waiting $delay ticks before execution.")
 
-        Task.builder()
-            .execute { task -> executeAction(player, kitId, kit, kitData) }
-            .delay(delay)
-            .build()
+        Utils.printDebug("Delay found for $type Action. Waiting $delay ticks before execution.")
+        Scheduler.scheduleTask(delay.toInt(), Scheduler.DelayedAction({
+            executeAction(player, kitId, kit, kitData)
+        }))
     }
 
     abstract fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData)
@@ -52,7 +51,7 @@ abstract class Action(
 
     fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         if (requirements != null) {
-            for ((id, action) in requirements.denyActions) {
+            for ((_, action) in requirements.denyActions) {
                 action.attemptExecution(player, kitId, kit, kitData)
             }
         }
@@ -60,7 +59,7 @@ abstract class Action(
 
     fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
         if (requirements != null) {
-            for ((id, action) in requirements.successActions) {
+            for ((_, action) in requirements.successActions) {
                 action.attemptExecution(player, kitId, kit, kitData)
             }
         }

@@ -1,35 +1,28 @@
 package com.pokeskies.skieskits.gui
 
-import ca.landonjw.gooeylibs2.api.UIManager
-import ca.landonjw.gooeylibs2.api.data.UpdateEmitter
-import ca.landonjw.gooeylibs2.api.page.Page
-import ca.landonjw.gooeylibs2.api.template.Template
-import ca.landonjw.gooeylibs2.api.template.types.ChestTemplate
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
+import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.inventory.MenuType
 
 class KitsMenu(
-    private val player: ServerPlayer
-) : UpdateEmitter<Page?>(), Page {
+    player: ServerPlayer
+) : SimpleGui(getTypeFromSize(SkiesKits.INSTANCE.configManager.menuConfig.size), player, false) {
     private val config = SkiesKits.INSTANCE.configManager.menuConfig
-
-    private val template: ChestTemplate =
-        ChestTemplate.Builder(config.size)
-            .build()
 
     init {
         refresh()
     }
 
     private fun refresh() {
-        for ((id, item) in config.items) {
+        for ((_, item) in config.items) {
             val button = item.createButton(player, null, null, null)
             for (slot in item.slots) {
-                template.set(slot, button.build())
+                setSlot(slot, button.build())
             }
         }
 
@@ -45,27 +38,27 @@ class KitsMenu(
 
             if (!kit.hasPermission(player)) {
                 for (slot in options.slots) {
-                    template.set(slot, options.noPermission.createButton(player, kitId, kit, kitData).build())
+                    setSlot(slot, options.noPermission.createButton(player, kitId, kit, kitData).build())
                 }
                 continue
             }
 
             if (!kitData.checkUsage(kit.maxUses)) {
                 for (slot in options.slots) {
-                    template.set(slot, options.maxUses.createButton(player, kitId, kit, kitData).build())
+                    setSlot(slot, options.maxUses.createButton(player, kitId, kit, kitData).build())
                 }
                 continue
             }
 
             if (!kitData.checkCooldown(kit.cooldown)) {
                 for (slot in options.slots) {
-                    template.set(slot, options.onCooldown.createButton(player, kitId, kit, kitData).build())
+                    setSlot(slot, options.onCooldown.createButton(player, kitId, kit, kitData).build())
                 }
                 continue
             }
 
             var passed = true
-            for ((id, requirement) in kit.requirements.requirements) {
+            for ((_, requirement) in kit.requirements.requirements) {
                 if (!requirement.passesRequirements(player, kitId, kit, kitData)) {
                     passed = false
                 }
@@ -73,23 +66,23 @@ class KitsMenu(
 
             if (!passed) {
                 for (slot in options.slots) {
-                    template.set(slot, options.failedRequirements.createButton(player, kitId, kit, kitData).build())
+                    setSlot(slot, options.failedRequirements.createButton(player, kitId, kit, kitData).build())
                 }
                 continue
             }
 
             for (slot in options.slots) {
-                template.set(slot, options.available.createButton(player, kitId, kit, kitData)
-                    .onClick { ctx ->
+                setSlot(slot, options.available.createButton(player, kitId, kit, kitData)
+                    .setCallback { ctx ->
                         if (!kit.hasPermission(player)) {
                             player.sendMessage(Utils.deserializeText(
                                 SkiesKits.INSTANCE.configManager.config.messages.kitNoPermission.replace("%kit_name%", kitId)
                             ))
-                            return@onClick
+                            return@setCallback
                         }
 
                         kit.claim(kitId, player)
-                        UIManager.closeUI(player)
+                        close()
                     }
                     .build())
             }
@@ -97,11 +90,21 @@ class KitsMenu(
         }
     }
 
-    override fun getTemplate(): Template {
-        return template
-    }
-
     override fun getTitle(): Component {
         return Utils.deserializeText(Utils.parsePlaceholders(player, config.title, null, null, null))
+    }
+
+    companion object {
+        private fun getTypeFromSize(size: Int): MenuType<*> {
+            return when (size) {
+                1 -> MenuType.GENERIC_9x1
+                2 -> MenuType.GENERIC_9x2
+                3 -> MenuType.GENERIC_9x3
+                4 -> MenuType.GENERIC_9x4
+                5 -> MenuType.GENERIC_9x5
+                6 -> MenuType.GENERIC_9x6
+                else -> MenuType.GENERIC_9x6
+            }
+        }
     }
 }

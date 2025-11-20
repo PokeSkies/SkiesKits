@@ -1,6 +1,5 @@
 package com.pokeskies.skieskits
 
-import ca.landonjw.gooeylibs2.api.tasks.Task
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonReader
@@ -16,6 +15,7 @@ import com.pokeskies.skieskits.economy.IEconomyService
 import com.pokeskies.skieskits.placeholders.PlaceholderManager
 import com.pokeskies.skieskits.storage.IStorage
 import com.pokeskies.skieskits.storage.StorageType
+import com.pokeskies.skieskits.utils.Scheduler
 import com.pokeskies.skieskits.utils.Utils
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
@@ -99,6 +99,7 @@ class SkiesKits : ModInitializer {
             )
             this.server = server
             this.nbtOpts = server.registryAccess().createSerializationContext(NbtOps.INSTANCE)
+            Scheduler.start()
         })
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
             this.configManager.loadKits()
@@ -114,7 +115,7 @@ class SkiesKits : ModInitializer {
         }
 
         ServerPlayConnectionEvents.JOIN.register { event, _, _ ->
-            Task.builder().execute { ctx ->
+            Scheduler.scheduleTask(20, Scheduler.DelayedAction({
                 val player = event.player
                 Utils.printDebug("Player ${player.name.string} joined the server! Checking ${ConfigManager.KITS.size} kits...")
                 if (!player.hasDisconnected()) {
@@ -125,9 +126,7 @@ class SkiesKits : ModInitializer {
                         }
                     }
                 }
-            }
-            .delay(20L)
-            .build()
+            }))
         }
     }
 
