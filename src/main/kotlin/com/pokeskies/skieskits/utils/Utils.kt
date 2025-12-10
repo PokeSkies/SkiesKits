@@ -7,6 +7,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.core.Registry
 import net.minecraft.network.chat.Component
@@ -23,7 +24,10 @@ object Utils {
     }
 
     fun deserializeText(text: String): Component {
-        return SkiesKits.INSTANCE.adventure!!.toNative(miniMessage.deserialize(text))
+        return SkiesKits.INSTANCE.adventure!!.toNative(
+            miniMessage.deserialize(text)
+            .applyFallbackStyle({ it.decoration(TextDecoration.ITALIC, false) })
+        )
     }
 
     fun printDebug(message: String?, bypassCheck: Boolean = false) {
@@ -70,6 +74,7 @@ object Utils {
                 printError("There was an error while deserializing a Registry Type: $registry")
             return parsed
         }
+
         override fun serialize(src: T, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
             return JsonPrimitive(registry.getKey(src).toString())
         }
