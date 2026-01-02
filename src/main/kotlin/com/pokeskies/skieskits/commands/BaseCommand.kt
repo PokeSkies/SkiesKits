@@ -57,7 +57,13 @@ class BaseCommand {
                 return 0
             }
 
-            KitsMenu(player).open()
+            try {
+                KitsMenu(player).open()
+            } catch (e: Exception) {
+                Utils.printError("An error occurred while opening the Kits menu for player ${player.name.string}: ${e.message}")
+                ctx.source.sendMessage(Utils.deserializeText("<red>An error occurred while opening the Kits menu. Please contact an administrator."))
+                return 0
+            }
             return 1
         }
     }

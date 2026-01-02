@@ -18,7 +18,8 @@ import java.util.function.Function
 object Utils {
     val miniMessage: MiniMessage = MiniMessage.miniMessage()
 
-    fun parsePlaceholders(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
+    fun parsePlaceholders(player: ServerPlayer, text: String?, kitId: String?, kit: Kit?, kitData: KitData?): String {
+        if (text == null) return ""
         return SkiesKits.INSTANCE.placeholderManager.parse(player, text, kitId, kit, kitData)
     }
 
@@ -65,7 +66,7 @@ object Utils {
     data class RegistrySerializer<T>(val registry: Registry<T>) : JsonSerializer<T>, JsonDeserializer<T> {
         @Throws(JsonParseException::class)
         override fun deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): T? {
-            var parsed = if (json.isJsonPrimitive) registry.get(ResourceLocation.parse(json.asString)) else null
+            val parsed = if (json.isJsonPrimitive) registry.get(ResourceLocation.parse(json.asString)) else null
             if (parsed == null)
                 printError("There was an error while deserializing a Registry Type: $registry")
             return parsed
@@ -80,7 +81,7 @@ object Utils {
         override fun deserialize(json: JsonElement?, typeOfT: Type?, context: JsonDeserializationContext?): T? {
             return try {
                 codec.decode(JsonOps.INSTANCE, json).orThrow.first
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 printError("There was an error while deserializing a Codec: $codec")
                 null
             }
@@ -92,18 +93,10 @@ object Utils {
                     codec.encodeStart(JsonOps.INSTANCE, src).orThrow
                 else
                     JsonNull.INSTANCE
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 printError("There was an error while serializing a Codec: $codec")
                 JsonNull.INSTANCE
             }
         }
     }
-}
-
-fun <A, B> Codec<A>.recordCodec(id: String, getter: Function<B, A>): RecordCodecBuilder<B, A> {
-    return this.fieldOf(id).forGetter(getter)
-}
-
-fun <A, B> Codec<A>.optionalRecordCodec(id: String, getter: Function<B, A>, default: A): RecordCodecBuilder<B, A> {
-    return this.fieldOf(id).orElse(default).forGetter(getter)
 }

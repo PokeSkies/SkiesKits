@@ -86,6 +86,7 @@ dependencies {
     implementation(include("org.graalvm.sdk:graal-sdk:22.3.0")!!)
     implementation(include("org.graalvm.truffle:truffle-api:22.3.0")!!)
 
+    modImplementation("com.cobblemon:fabric:1.7.1+1.21.1")
     modImplementation("com.github.plan-player-analytics:Plan:5.6.2883")
 
     implementation(include("org.mongodb:mongodb-driver-sync:4.11.0")!!)

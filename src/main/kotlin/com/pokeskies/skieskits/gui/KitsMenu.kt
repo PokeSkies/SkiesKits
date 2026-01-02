@@ -86,7 +86,6 @@ class KitsMenu(
                     }
                     .build())
             }
-            continue
         }
     }
 
