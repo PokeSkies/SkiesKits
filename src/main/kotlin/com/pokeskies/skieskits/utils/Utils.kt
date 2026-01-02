@@ -3,7 +3,6 @@ package com.pokeskies.skieskits.utils
 import com.google.gson.*
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
-import com.mojang.serialization.codecs.RecordCodecBuilder
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
@@ -13,12 +12,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import java.lang.reflect.Type
-import java.util.function.Function
 
 object Utils {
     val miniMessage: MiniMessage = MiniMessage.miniMessage()
 
-    fun parsePlaceholders(player: ServerPlayer, text: String?, kitId: String?, kit: Kit?, kitData: KitData?): String {
+    fun parsePlaceholders(player: ServerPlayer, text: String?, kitId: String? = null, kit: Kit? = null, kitData: KitData? = null): String {
         if (text == null) return ""
         return SkiesKits.INSTANCE.placeholderManager.parse(player, text, kitId, kit, kitData)
     }
