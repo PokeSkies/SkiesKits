@@ -4,7 +4,6 @@ import com.mojang.brigadier.arguments.BoolArgumentType
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
@@ -48,7 +47,7 @@ class GiveCommand : SubCommand {
             val kit = ConfigManager.KITS[kitId]
             if (kit == null) {
                 ctx.source.sendMessage(Utils.deserializeText(
-                    SkiesKits.INSTANCE.configManager.config.messages.kitNotFound.replace("%kit_name%", kitId)
+                    ConfigManager.CONFIG.messages.kitNotFound.replace("%kit_name%", kitId)
                 ))
                 return 1
             }

@@ -53,22 +53,24 @@ class MainConfig(
 
     class Messages(
         @SerializedName("kit_not_found")
-        val kitNotFound: String = "",
+        val kitNotFound: String = "<red>Could not find a kit named %kit_name%!",
         @SerializedName("kit_received")
-        val kitReceived: String = "",
+        val kitReceived: String = "<green>You have received the kit %kit_name%!",
         @SerializedName("kit_failed_uses")
-        val kitFailedUses: String = "",
+        val kitFailedUses: String = "<red>You cannot claim the kit %kit_name% because you have reached the max uses!",
         @SerializedName("kit_failed_cooldown")
-        val kitFailedCooldown: String = "",
+        val kitFailedCooldown: String = "<red>You cannot claim the kit %kit_name% because it's still on cooldown for another %kit_cooldown%!",
         @SerializedName("kit_failed_requirements")
-        val kitFailedRequirements: String = "",
+        val kitFailedRequirements: String = "<red>You cannot claim the kit %kit_name% because you have not met the requirements!",
         @SerializedName("kit_no_permission")
-        val kitNoPermission: String = ""
+        val kitNoPermission: String = "<red>You cannot claim the kit %kit_name% because you do not have permission!",
+        @SerializedName("kit_no_preview")
+        val kitNoPreview: String = "<red>The kit %kit_name% does not have a preview set up!"
     ) {
         override fun toString(): String {
             return "Messages(kit_not_found='$kitNotFound', kit_received='$kitReceived', kit_failed_uses='$kitFailedUses'," +
                     " kit_failed_cooldown='$kitFailedCooldown', kit_failed_requirements='$kitFailedRequirements'," +
-                    " kit_no_permission='$kitNoPermission')"
+                    " kit_no_permission='$kitNoPermission', kit_no_preview='$kitNoPreview')"
         }
     }
 

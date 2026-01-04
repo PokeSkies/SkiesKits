@@ -19,7 +19,7 @@ enum class StorageType(val identifier: String) {
         }
     }
 
-    internal class StorageTypeAdaptor : JsonSerializer<StorageType>, JsonDeserializer<StorageType> {
+    internal class Adapter : JsonSerializer<StorageType>, JsonDeserializer<StorageType> {
         override fun serialize(src: StorageType, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
             return JsonPrimitive(src.identifier)
         }
@@ -29,7 +29,7 @@ enum class StorageType(val identifier: String) {
 
             if (storageType == null) {
                 Utils.printError("Could not deserialize Storage Type '${json.asString}' using SQLite as backup!")
-                return StorageType.SQLITE
+                return SQLITE
             }
 
             return storageType

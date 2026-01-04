@@ -14,14 +14,14 @@ enum class ComparisonType(val identifier: String) {
 
     companion object {
         fun valueOfAnyCase(name: String): ComparisonType? {
-            for (type in values()) {
+            for (type in entries) {
                 if (name.equals(type.identifier, true)) return type
             }
             return null
         }
     }
 
-    internal class ComparisonTypeAdaptor : JsonSerializer<ComparisonType>, JsonDeserializer<ComparisonType> {
+    internal class Adapter : JsonSerializer<ComparisonType>, JsonDeserializer<ComparisonType> {
         override fun serialize(src: ComparisonType, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
             return JsonPrimitive(src.identifier)
         }

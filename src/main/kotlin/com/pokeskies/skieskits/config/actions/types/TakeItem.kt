@@ -7,6 +7,7 @@ import com.pokeskies.skieskits.config.actions.ActionType
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
+import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack
 import kotlin.jvm.optionals.getOrNull
 
 class TakeItem(
-    type: ActionType = ActionType.GIVE_XP,
     delay: Long = 0,
     chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
@@ -24,8 +24,8 @@ class TakeItem(
     val amount: Int = 1,
     val nbt: CompoundTag? = null,
     val strict: Boolean = true
-) : Action(type, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+) : Action(ActionType.TAKE_ITEM, delay, chance, requirements) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         var removed = 0
         for ((i, stack) in player.inventory.items.withIndex()) {

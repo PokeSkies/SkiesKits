@@ -1,6 +1,6 @@
 package com.pokeskies.skieskits.config.actions.types
 
-import com.pokeskies.skieskits.SkiesKits
+import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.config.actions.ActionType
@@ -10,26 +10,30 @@ import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.server.level.ServerPlayer
 
-class CurrencyWithdraw(
+class PreviewKit(
     delay: Long = 0,
     chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
-    private val currency: String = "",
-    private val amount: Double = 0.0
-) : Action(ActionType.CURRENCY_WITHDRAW, delay, chance, requirements) {
+    val id: String,
+) : Action(ActionType.PREVIEW_KIT, delay, chance, requirements) {
     override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
-        Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
+        Utils.printDebug("[ACTION - ${type.name}] Player(${player.gameProfile.name}) $this")
 
-        val service = SkiesKits.INSTANCE.economyService
-        if (service == null) {
-            Utils.printError("Currency Withdraw Action was executed but no valid Economy Service could be found.")
+        val kit = ConfigManager.KITS[kitId]
+        if (kit == null) {
+            Utils.printError("The kit $id was not a valid kit id.")
             return
         }
 
-        service.withdraw(player, amount, currency)
+        val preview = kit.createPreview(player) ?: run {
+            Utils.printError("The kit $id does not have a preview menu configured or the preview id was invalid.")
+            return
+        }
+
+        preview.open()
     }
 
     override fun toString(): String {
-        return "CurrencyWithdraw(type=$type, requirements=$requirements, currency=$currency, amount=$amount)"
+        return "PreviewKit(id=$id)"
     }
 }

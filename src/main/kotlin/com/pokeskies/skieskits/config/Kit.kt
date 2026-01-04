@@ -5,6 +5,7 @@ import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.actions.ActionOptions
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
+import com.pokeskies.skieskits.gui.PreviewMenu
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.server.level.ServerPlayer
@@ -22,8 +23,11 @@ class Kit(
     val items: List<KitItem> = emptyList(),
     val requirements: RequirementOptions = RequirementOptions(),
     val actions: ActionOptions = ActionOptions(),
+    val preview: PreviewOptions = PreviewOptions()
 ) {
-    fun claim(kitId: String, player: ServerPlayer, bypassChecks: Boolean = false, bypassRequirements: Boolean = false) {
+    @Transient lateinit var id: String
+
+    fun claim(kitId: String, player: ServerPlayer, bypassChecks: Boolean = false, bypassRequirements: Boolean = false, silent: Boolean = false) {
         Utils.printDebug("Attempting to claim kit $kitId for player ${player.name.string}! BypassChecks=$bypassChecks, BypassRequirements=$bypassRequirements")
         if (SkiesKits.INSTANCE.storage == null) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
@@ -45,9 +49,9 @@ class Kit(
             if (!kitData.checkUsage(maxUses)) {
                 Utils.printDebug("Player ${player.name.string} has reached the maximum uses for kit $kitId! Kit uses=${kitData.uses} and maxUses=$maxUses")
                 actions.executeUsesActions(player, kitId, this, kitData)
-                if (notifications) {
+                if (!silent && notifications) {
                     player.sendMessage(Utils.deserializeText(
-                        SkiesKits.INSTANCE.configManager.config.messages.kitFailedUses
+                        ConfigManager.CONFIG.messages.kitFailedUses
                             .replace("%kit_name%", getDisplayName(kitId))
                             .replace("%kit_uses%", kitData.uses.toString())
                             .replace("%kit_max_uses%", maxUses.toString())
@@ -59,10 +63,10 @@ class Kit(
             if (!kitData.checkCooldown(cooldown)) {
                 Utils.printDebug("Player ${player.name.string} is still on cooldown for kit $kitId! Kit cooldown=${kitData.getTimeRemaining(cooldown)}")
                 actions.executeCooldownActions(player, kitId, this, kitData)
-                if (notifications) {
+                if (!silent && notifications) {
                     player.sendMessage(
                         Utils.deserializeText(
-                            SkiesKits.INSTANCE.configManager.config.messages.kitFailedCooldown
+                            ConfigManager.CONFIG.messages.kitFailedCooldown
                                 .replace("%kit_name%", getDisplayName(kitId))
                                 .replace("%kit_cooldown%", Utils.getFormattedTime(kitData.getTimeRemaining(cooldown)))
                         )
@@ -74,7 +78,7 @@ class Kit(
 
         if (!bypassRequirements) {
             var success = true
-            for ((id, requirement) in requirements.requirements) {
+            for ((_, requirement) in requirements.requirements) {
                 if (requirement.passesRequirements(player, kitId, this, kitData)) {
                     requirement.executeSuccessActions(player, kitId, this, kitData)
                 } else {
@@ -87,10 +91,10 @@ class Kit(
                 Utils.printDebug("Player ${player.name.string} failed the requirements for kit $kitId!")
                 requirements.executeDenyActions(player, kitId, this, kitData)
                 actions.executeRequirementsActions(player, kitId, this, kitData)
-                if (notifications) {
+                if (!silent && notifications) {
                     player.sendMessage(
                         Utils.deserializeText(
-                            SkiesKits.INSTANCE.configManager.config.messages.kitFailedRequirements
+                            ConfigManager.CONFIG.messages.kitFailedRequirements
                                 .replace("%kit_name%", getDisplayName(kitId))
                         )
                     )
@@ -119,13 +123,25 @@ class Kit(
 
         actions.executeClaimedActions(player, kitId, this, kitData)
 
-        if (notifications) {
+        if (!silent && notifications) {
             player.sendMessage(
                 Utils.deserializeText(
-                    SkiesKits.INSTANCE.configManager.config.messages.kitReceived
+                    ConfigManager.CONFIG.messages.kitReceived
                         .replace("%kit_name%", getDisplayName(kitId))
                 )
             )
+        }
+    }
+
+    fun createPreview(player: ServerPlayer): PreviewMenu? {
+        return if (preview.id.isNotBlank()) {
+            val previewConfig = ConfigManager.PREVIEWS[preview.id] ?: run {
+                Utils.printError("Kit $displayName references a preview menu with id ${preview.id} but it was not found!")
+                return null
+            }
+            PreviewMenu(player, previewConfig, this)
+        } else {
+            null
         }
     }
 
@@ -137,7 +153,17 @@ class Kit(
         return if (!permission.isNullOrEmpty()) Permissions.check(player, permission, 2) else true
     }
 
+    class PreviewOptions(
+        val id: String = "",
+        val extras: List<MenuItem> = emptyList()
+    ) {
+        override fun toString(): String {
+            return "PreviewOptions(id='$id', extras=$extras)"
+        }
+    }
+
     override fun toString(): String {
-        return "Kit(cooldown=$cooldown, max_uses=$maxUses, on_join=$onJoin, display_name=$displayName, permission=$permission, items=$items, requirements=$requirements, actions=$actions)"
+        return "Kit(cooldown=$cooldown, max_uses=$maxUses, on_join=$onJoin, display_name=$displayName, " +
+                "permission=$permission, items=$items, requirements=$requirements, actions=$actions, preview=$preview)"
     }
 }

@@ -2,7 +2,6 @@ package com.pokeskies.skieskits
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.google.gson.stream.JsonReader
 import com.pokeskies.skieskits.commands.BaseCommand
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.config.actions.Action
@@ -12,6 +11,8 @@ import com.pokeskies.skieskits.config.requirements.Requirement
 import com.pokeskies.skieskits.config.requirements.RequirementType
 import com.pokeskies.skieskits.economy.EconomyType
 import com.pokeskies.skieskits.economy.IEconomyService
+import com.pokeskies.skieskits.gui.GenericClickType
+import com.pokeskies.skieskits.gui.InventoryType
 import com.pokeskies.skieskits.placeholders.PlaceholderManager
 import com.pokeskies.skieskits.storage.IStorage
 import com.pokeskies.skieskits.storage.StorageType
@@ -37,19 +38,19 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.graalvm.polyglot.Engine
 import java.io.File
-import java.io.FileReader
-import java.io.FileWriter
 import java.io.IOException
-import java.nio.file.Files
 
 class SkiesKits : ModInitializer {
     companion object {
         lateinit var INSTANCE: SkiesKits
-        val LOGGER: Logger = LogManager.getLogger("skieskits")
+
+        var MOD_ID = "skieskits"
+        var MOD_NAME = "SkiesKits"
+
+        val LOGGER: Logger = LogManager.getLogger(MOD_ID)
     }
 
     lateinit var configDir: File
-    lateinit var configManager: ConfigManager
     var storage: IStorage? = null
 
     var economyService: IEconomyService? = null
@@ -62,11 +63,13 @@ class SkiesKits : ModInitializer {
     lateinit var graalEngine: Engine
 
     var gson: Gson = GsonBuilder().disableHtmlEscaping()
-        .registerTypeAdapter(Action::class.java, ActionType.ActionTypeAdaptor())
-        .registerTypeAdapter(Requirement::class.java, RequirementType.RequirementTypeAdaptor())
-        .registerTypeAdapter(ComparisonType::class.java, ComparisonType.ComparisonTypeAdaptor())
-        .registerTypeAdapter(EconomyType::class.java, EconomyType.EconomyTypeAdaptor())
-        .registerTypeAdapter(StorageType::class.java, StorageType.StorageTypeAdaptor())
+        .registerTypeAdapter(Action::class.java, ActionType.Adapter())
+        .registerTypeAdapter(Requirement::class.java, RequirementType.Adapter())
+        .registerTypeAdapter(ComparisonType::class.java, ComparisonType.Adapter())
+        .registerTypeAdapter(EconomyType::class.java, EconomyType.Adapter())
+        .registerTypeAdapter(StorageType::class.java, StorageType.Adapter())
+        .registerTypeAdapter(GenericClickType::class.java, GenericClickType.Adapter())
+        .registerTypeAdapter(InventoryType::class.java, InventoryType.Adapter())
         .registerTypeHierarchyAdapter(Item::class.java, Utils.RegistrySerializer(BuiltInRegistries.ITEM))
         .registerTypeHierarchyAdapter(SoundEvent::class.java, Utils.RegistrySerializer(BuiltInRegistries.SOUND_EVENT))
         .registerTypeHierarchyAdapter(CompoundTag::class.java, Utils.CodecSerializer(CompoundTag.CODEC))
@@ -78,15 +81,15 @@ class SkiesKits : ModInitializer {
         INSTANCE = this
 
         this.configDir = File(FabricLoader.getInstance().configDirectory, "skieskits")
-        this.configManager = ConfigManager(configDir)
+        ConfigManager.load()
         try {
-            this.storage = IStorage.load(configManager.config.storage)
+            this.storage = IStorage.load(ConfigManager.CONFIG.storage)
         } catch (e: IOException) {
             Utils.printError(e.message)
             this.storage = null
         }
 
-        this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
+        this.economyService = IEconomyService.getEconomyService(ConfigManager.CONFIG.economy)
         this.placeholderManager = PlaceholderManager()
 
         this.graalEngine = Engine.newBuilder()
@@ -102,7 +105,7 @@ class SkiesKits : ModInitializer {
             Scheduler.start()
         })
         ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
-            this.configManager.loadKits()
+            ConfigManager.loadKits()
         })
         ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer ->
             this.adventure = null
@@ -122,7 +125,7 @@ class SkiesKits : ModInitializer {
                     for ((id, kit) in ConfigManager.KITS) {
                         Utils.printDebug("Checking kit $id! Kit onJoin=${kit.onJoin}, Player hasPermission=${kit.hasPermission(player)}")
                         if (kit.onJoin && kit.hasPermission(player)) {
-                            kit.claim(id, player)
+                            kit.claim(id, player, silent = true)
                         }
                     }
                 }
@@ -133,51 +136,13 @@ class SkiesKits : ModInitializer {
     fun reload() {
         this.storage?.close()
 
-        this.configManager.reload()
+        ConfigManager.load()
         try {
-            this.storage = IStorage.load(configManager.config.storage)
+            this.storage = IStorage.load(ConfigManager.CONFIG.storage)
         } catch (e: IOException) {
             Utils.printError(e.message)
             this.storage = null
         }
-        this.economyService = IEconomyService.getEconomyService(configManager.config.economy)
-        this.configManager.loadKits()
-    }
-
-    fun <T : Any> loadFile(filename: String, default: T, create: Boolean = false): T {
-        val file = File(configDir, filename)
-        var value: T = default
-        try {
-            Files.createDirectories(configDir.toPath())
-            if (file.exists()) {
-                FileReader(file, Charsets.UTF_8).use { reader ->
-                    val jsonReader = JsonReader(reader)
-                    value = gsonPretty.fromJson(jsonReader, default::class.java)
-                }
-            } else if (create) {
-                Files.createFile(file.toPath())
-                FileWriter(file).use { fileWriter ->
-                    fileWriter.write(gsonPretty.toJson(default))
-                    fileWriter.flush()
-                }
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return value
-    }
-
-    fun <T> saveFile(filename: String, `object`: T, path: String? = null): Boolean {
-        val file = File(if (path.isNullOrEmpty()) configDir else File(configDir, path), filename)
-        try {
-            FileWriter(file).use { fileWriter ->
-                fileWriter.write(gsonPretty.toJson(`object`))
-                fileWriter.flush()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            return false
-        }
-        return true
+        this.economyService = IEconomyService.getEconomyService(ConfigManager.CONFIG.economy)
     }
 }

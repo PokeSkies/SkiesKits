@@ -5,6 +5,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Scheduler
 import com.pokeskies.skieskits.utils.Utils
+import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.server.level.ServerPlayer
 import kotlin.random.Random
 
@@ -15,7 +16,7 @@ abstract class Action(
     val requirements: RequirementOptions? = RequirementOptions()
 ) {
     // Will do a chance check and then apply any delay
-    open fun attemptExecution(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    open fun attemptExecution(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui? = null) {
         if (chance > 0.0 && chance < 1.0) {
             val roll = Random.nextFloat()
             Utils.printDebug("Attempting chance roll for $type Action. Result is: $roll <= $chance = ${roll <= chance}.")
@@ -26,17 +27,17 @@ abstract class Action(
         }
 
         if (delay <= 0) {
-            executeAction(player, kitId, kit, kitData)
+            executeAction(player, kitId, kit, kitData, gui)
             return
         }
 
         Utils.printDebug("Delay found for $type Action. Waiting $delay ticks before execution.")
         Scheduler.scheduleTask(delay.toInt(), Scheduler.DelayedAction({
-            executeAction(player, kitId, kit, kitData)
+            executeAction(player, kitId, kit, kitData, gui)
         }))
     }
 
-    abstract fun executeAction(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData)
+    abstract fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?)
 
     fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (requirements != null) {

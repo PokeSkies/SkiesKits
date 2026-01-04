@@ -6,79 +6,46 @@ import com.google.gson.JsonParser
 import com.google.gson.stream.JsonReader
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.utils.Utils
-import java.io.File
-import java.io.FileInputStream
-import java.io.InputStream
-import java.io.InputStreamReader
+import java.io.*
 import java.nio.file.Files
-import java.nio.file.Path
+import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 
-class ConfigManager(private val configDir: File) {
-    lateinit var config: MainConfig
-    lateinit var menuConfig: KitMenuConfig
+object ConfigManager {
+    private var assetPackage = "assets/${SkiesKits.MOD_ID}"
 
-    companion object {
-        var KITS: BiMap<String, Kit> = HashBiMap.create()
-    }
+    var KITS: BiMap<String, Kit> = HashBiMap.create()
+    var PREVIEWS: BiMap<String, PreviewConfig> = HashBiMap.create()
 
-    init {
-        reload()
-    }
+    lateinit var CONFIG: MainConfig
+    lateinit var MENU_CONFIG: KitMenuConfig
 
-    fun reload() {
+    fun load() {
         copyDefaults()
-        config = SkiesKits.INSTANCE.loadFile("config.json", MainConfig())
-        menuConfig = SkiesKits.INSTANCE.loadFile("menu.json", KitMenuConfig())
+
+        CONFIG = loadFile("config.json", MainConfig())
+
+        loadKits()
+        loadPreviews()
+
+        MENU_CONFIG = loadFile("menu.json", KitMenuConfig())
     }
 
     fun copyDefaults() {
         val classLoader = SkiesKits::class.java.classLoader
 
-        configDir.mkdirs()
+        SkiesKits.INSTANCE.configDir.mkdirs()
 
-        // Main Config
-        val configFile = configDir.resolve("config.json")
-        if (!configFile.exists()) {
-            try {
-                val inputStream: InputStream = classLoader.getResourceAsStream("assets/skieskits/config.json")
-                Files.copy(inputStream, configFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            } catch (e: Exception) {
-                Utils.printError("Failed to copy the default config file: $e - ${e.message}")
-            }
-        }
-
-        // Menu Config
-        val menuFile = configDir.resolve("menu.json")
-        if (!menuFile.exists()) {
-            try {
-                val inputStream: InputStream = classLoader.getResourceAsStream("assets/skieskits/menu.json")
-                Files.copy(inputStream, menuFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            } catch (e: Exception) {
-                Utils.printError("Failed to copy the default menu file: $e - ${e.message}")
-            }
-        }
-
-        // If the 'kits' directory does not exist, create it and copy the default example GUI
-        val kitsDir = configDir.resolve("kits")
-        if (!kitsDir.exists()) {
-            kitsDir.mkdirs()
-            val file = kitsDir.resolve("example_kit.json")
-            try {
-                val resourceFile: Path =
-                    Path.of(classLoader.getResource("assets/skieskits/kits/example_kit.json").toURI())
-                Files.copy(resourceFile, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
-            } catch (e: Exception) {
-                Utils.printError("Failed to copy the default kit file: " + e.message)
-            }
-        }
+        attemptDefaultFileCopy(classLoader, "config.json")
+        attemptDefaultDirectoryCopy(classLoader, "kits")
+        attemptDefaultDirectoryCopy(classLoader, "previews")
     }
 
     fun loadKits() {
         KITS.clear()
 
-        val dir = configDir.resolve("kits")
+        val dir = SkiesKits.INSTANCE.configDir.resolve("kits")
         if (dir.exists() && dir.isDirectory) {
             val files = dir.listFiles()
             if (files != null) {
@@ -88,7 +55,9 @@ class ConfigManager(private val configDir: File) {
                         val id = fileName.substring(0, fileName.lastIndexOf(".json"))
                         val jsonReader = JsonReader(InputStreamReader(FileInputStream(file), Charsets.UTF_8))
                         try {
-                            KITS[id] = SkiesKits.INSTANCE.gsonPretty.fromJson(JsonParser.parseReader(jsonReader), Kit::class.java)
+                            val kit = SkiesKits.INSTANCE.gsonPretty.fromJson(JsonParser.parseReader(jsonReader), Kit::class.java)
+                            kit.id = id
+                            KITS[id] = kit
                             Utils.printInfo("Successfully read and loaded the file $fileName!")
                         } catch (ex: Exception) {
                             Utils.printError("Error while trying to parse the file $fileName as a Kit!")
@@ -101,6 +70,112 @@ class ConfigManager(private val configDir: File) {
             }
         } else {
             Utils.printError("The 'kits' directory either does not exist or is not a directory!")
+        }
+    }
+
+    fun loadPreviews() {
+        PREVIEWS.clear()
+
+        val dir = SkiesKits.INSTANCE.configDir.resolve("previews")
+        if (dir.exists() && dir.isDirectory) {
+            val files = dir.listFiles()
+            if (files != null) {
+                for (file in files) {
+                    val fileName = file.name
+                    if (file.isFile && fileName.contains(".json")) {
+                        val id = fileName.substring(0, fileName.lastIndexOf(".json"))
+                        val jsonReader = JsonReader(InputStreamReader(FileInputStream(file), Charsets.UTF_8))
+                        try {
+                            PREVIEWS[id] = SkiesKits.INSTANCE.gsonPretty.fromJson(
+                                JsonParser.parseReader(jsonReader),
+                                PreviewConfig::class.java
+                            )
+                            Utils.printInfo("Successfully read and loaded the file $fileName!")
+                        } catch (ex: Exception) {
+                            Utils.printError("Error while trying to parse the file $fileName as a Preview Menu!")
+                            ex.printStackTrace()
+                        }
+                    } else {
+                        Utils.printError("File $fileName is either not a file or is not a .json file!")
+                    }
+                }
+            }
+        } else {
+            Utils.printError("The 'previews' directory either does not exist or is not a directory!")
+        }
+    }
+
+    fun <T : Any> loadFile(filename: String, default: T, create: Boolean = false): T {
+        val file = File(SkiesKits.INSTANCE.configDir, filename)
+        var value: T = default
+        try {
+            Files.createDirectories(SkiesKits.INSTANCE.configDir.toPath())
+            if (file.exists()) {
+                FileReader(file).use { reader ->
+                    val jsonReader = JsonReader(reader)
+                    value = SkiesKits.INSTANCE.gsonPretty.fromJson(jsonReader, default::class.java)
+                }
+            } else if (create) {
+                Files.createFile(file.toPath())
+                FileWriter(file).use { fileWriter ->
+                    fileWriter.write(SkiesKits.INSTANCE.gsonPretty.toJson(default))
+                    fileWriter.flush()
+                }
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return value
+    }
+
+    fun <T> saveFile(filename: String, `object`: T): Boolean {
+        val dir = SkiesKits.INSTANCE.configDir
+        val file = File(dir, filename)
+        try {
+            FileWriter(file).use { fileWriter ->
+                fileWriter.write(SkiesKits.INSTANCE.gsonPretty.toJson(`object`))
+                fileWriter.flush()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+        return true
+    }
+
+    private fun attemptDefaultFileCopy(classLoader: ClassLoader, fileName: String) {
+        val file = SkiesKits.INSTANCE.configDir.resolve(fileName)
+        if (!file.exists()) {
+            try {
+                val stream = classLoader.getResourceAsStream("${assetPackage}/$fileName")
+                    ?: throw NullPointerException("File not found $fileName")
+
+                Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            } catch (e: Exception) {
+                Utils.printError("Failed to copy the default file '$fileName': $e")
+            }
+        }
+    }
+
+    private fun attemptDefaultDirectoryCopy(classLoader: ClassLoader, directoryName: String) {
+        val directory = SkiesKits.INSTANCE.configDir.resolve(directoryName)
+        if (!directory.exists()) {
+            directory.mkdirs()
+            try {
+                val sourceUrl = classLoader.getResource("${assetPackage}/$directoryName")
+                    ?: throw NullPointerException("Directory not found $directoryName")
+                val sourcePath = Paths.get(sourceUrl.toURI())
+
+                Files.walk(sourcePath).use { stream ->
+                    stream.filter { Files.isRegularFile(it) }
+                        .forEach { sourceFile ->
+                            val destinationFile = directory.resolve(sourcePath.relativize(sourceFile).toString())
+                            Files.copy(sourceFile, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                        }
+                }
+            } catch (e: Exception) {
+                Utils.printError("Failed to copy the default directory '$directoryName': " + e.message)
+            }
         }
     }
 }

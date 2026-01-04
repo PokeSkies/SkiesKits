@@ -20,14 +20,14 @@ enum class RequirementType(val identifier: String, val clazz: Class<*>) {
 
     companion object {
         fun valueOfAnyCase(name: String): RequirementType? {
-            for (type in values()) {
+            for (type in entries) {
                 if (name.equals(type.identifier, true)) return type
             }
             return null
         }
     }
 
-    internal class RequirementTypeAdaptor : JsonSerializer<Requirement>, JsonDeserializer<Requirement> {
+    internal class Adapter : JsonSerializer<Requirement>, JsonDeserializer<Requirement> {
         override fun serialize(src: Requirement, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
             return context.serialize(src, src::class.java)
         }

@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.commands.subcommands.*
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.gui.KitsMenu
@@ -16,7 +15,7 @@ import net.minecraft.commands.SharedSuggestionProvider
 
 class BaseCommand {
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = SkiesKits.INSTANCE.configManager.config.commands.map {
+        val rootCommands: List<LiteralCommandNode<CommandSourceStack>> = ConfigManager.CONFIG.commands.map {
             Commands.literal(it)
                 .requires(Permissions.require("skieskits.command.base", 2))
                 .then(Commands.argument("kit", StringArgumentType.word())
@@ -41,6 +40,7 @@ class BaseCommand {
             ResetUsageCommand().build(),
             ResetCooldownCommand().build(),
             CreateCommand().build(),
+            PreviewCommand().build(),
         )
 
         rootCommands.forEach { root ->

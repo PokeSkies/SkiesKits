@@ -1,6 +1,14 @@
 {
   "title": "Kits",
-  "size": 3,
+  "type": "GENERIC_9x3",
+  "click": {
+    "claim": [
+      "ANY_LEFT_CLICK"
+    ],
+    "preview": [
+      "ANY_RIGHT_CLICK"
+    ]
+  },
   "kits": {
     "example_kit": {
       "slots": [10],
@@ -14,7 +22,9 @@
           " <gold>- <gray>Cooldown: <white>%kit_cooldown%",
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
-          "<green><b>AVAILABLE <gray><i>(Click to claim this kit)"
+          "<green><b>AVAILABLE",
+          " <gray>- <green>Left-Click to claim this kit",
+          " <gray>- <red>Right-Click to preview this kit"
         ]
       },
       "on_cooldown": {
@@ -27,7 +37,8 @@
           " <gold>- <gray>Cooldown: <white>%kit_cooldown%",
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
-          "<red><b>ON COOLDOWN"
+          "<red><b>ON COOLDOWN",
+          " <gray>- <red>Right-Click to preview this kit"
         ]
       },
       "no_permission": {
@@ -40,7 +51,8 @@
           " <gold>- <gray>Cooldown: <white>%kit_cooldown%",
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
-          "<red><b>NO PERMISSION"
+          "<red><b>NO PERMISSION",
+          " <gray>- <red>Right-Click to preview this kit"
         ]
       },
       "max_uses": {
@@ -53,7 +65,8 @@
           " <gold>- <gray>Cooldown: <white>%kit_cooldown%",
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
-          "<red><b>MAX USES"
+          "<red><b>MAX USES",
+          " <gray>- <red>Right-Click to preview this kit"
         ]
       },
       "failed_requirements": {
@@ -66,7 +79,8 @@
           " <gold>- <gray>Cooldown: <white>%kit_cooldown%",
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
-          "<red><b>REQUIREMENTS NOT MET"
+          "<red><b>REQUIREMENTS NOT MET",
+          " <gray>- <red>Right-Click to preview this kit"
         ]
       }
     }

@@ -64,7 +64,7 @@ class CreateCommand : SubCommand {
                 items = items
             )
 
-            if (!SkiesKits.INSTANCE.saveFile("$kitId.json", kit, path = "kits")) {
+            if (!ConfigManager.saveFile("kits/$kitId.json", kit)) {
                 ctx.source.sendMessage(Utils.deserializeText("<red>There was an error saving the kit file! Not sure what happened..."))
                 return 0
             }

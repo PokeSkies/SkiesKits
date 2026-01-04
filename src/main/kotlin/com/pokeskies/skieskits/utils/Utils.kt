@@ -4,6 +4,7 @@ import com.google.gson.*
 import com.mojang.serialization.Codec
 import com.mojang.serialization.JsonOps
 import com.pokeskies.skieskits.SkiesKits
+import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
 import net.kyori.adventure.text.minimessage.MiniMessage
@@ -26,7 +27,7 @@ object Utils {
     }
 
     fun printDebug(message: String?, bypassCheck: Boolean = false) {
-        if (bypassCheck || SkiesKits.INSTANCE.configManager.config.debug)
+        if (bypassCheck || ConfigManager.CONFIG.debug)
             SkiesKits.LOGGER.info("[SkiesKits] DEBUG: $message")
     }
 

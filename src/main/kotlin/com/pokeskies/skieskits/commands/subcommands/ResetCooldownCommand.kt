@@ -43,7 +43,7 @@ class ResetCooldownCommand : SubCommand {
             val kit = ConfigManager.KITS[kitId]
             if (kit == null) {
                 ctx.source.sendMessage(Utils.deserializeText(
-                    SkiesKits.INSTANCE.configManager.config.messages.kitNotFound.replace("%kit_name%", kitId)
+                    ConfigManager.CONFIG.messages.kitNotFound.replace("%kit_name%", kitId)
                 ))
                 return 1
             }
@@ -87,7 +87,7 @@ class ResetCooldownCommand : SubCommand {
             for (player in players) {
                 val userdata = SkiesKits.INSTANCE.storage?.getUser(player.uuid)
                 if (userdata != null) {
-                    for ((kitId, kit) in ConfigManager.KITS) {
+                    for ((kitId, _) in ConfigManager.KITS) {
                         if (userdata.kits.containsKey(kitId)) {
                             val kitData = userdata.kits[kitId]!!
                             kitData.lastUse = 0

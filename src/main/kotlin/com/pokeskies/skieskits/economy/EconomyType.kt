@@ -18,14 +18,14 @@ enum class EconomyType(
 
     companion object {
         fun valueOfAnyCase(name: String): EconomyType? {
-            for (type in values()) {
+            for (type in entries) {
                 if (name.equals(type.identifier, true)) return type
             }
             return null
         }
     }
 
-    internal class EconomyTypeAdaptor : JsonSerializer<EconomyType>, JsonDeserializer<EconomyType> {
+    internal class Adapter : JsonSerializer<EconomyType>, JsonDeserializer<EconomyType> {
         override fun serialize(src: EconomyType, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
             return JsonPrimitive(src.identifier)
         }

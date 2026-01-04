@@ -13,7 +13,7 @@ class PlaceholderManager {
 
     init {
         services.add(DefaultPlaceholderService())
-        for (service in PlaceholderMod.values()) {
+        for (service in PlaceholderMod.entries) {
             if (service.isModPresent()) {
                 services.add(getServiceForType(service))
             }

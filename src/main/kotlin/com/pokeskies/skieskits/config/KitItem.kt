@@ -12,6 +12,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.component.CustomModelData
 import net.minecraft.world.item.component.ItemLore
 
 class KitItem(
@@ -20,12 +21,22 @@ class KitItem(
     val name: String? = null,
     val lore: List<String> = emptyList(),
     @SerializedName("components", alternate = ["nbt"])
-    val components: CompoundTag? = null
+    val components: CompoundTag? = null,
+    @SerializedName("custom_model_data")
+    val customModelData: Int? = null,
 ) {
-    fun giveItem(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun giveItem(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData?) {
+        val itemStack = createItemStack(player, kitId, kit, kitData) ?: return
+
+        if (!player.addItem(itemStack)) {
+            player.serverLevel().addFreshEntity(ItemEntity(player.serverLevel(), player.x, player.y, player.z, itemStack))
+        }
+    }
+
+    fun createItemStack(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData?): ItemStack? {
         if (item.isEmpty()) {
             Utils.printError("Item for kit $kitId is empty, cannot give item to player ${player.name.string}.")
-            return
+            return null
         }
 
         val itemStack = ItemStack(BuiltInRegistries.ITEM.get(ResourceLocation.tryParse(item)))
@@ -37,6 +48,10 @@ class KitItem(
         }
 
         val dataComponents = DataComponentPatch.builder()
+
+        if (customModelData != null) {
+            dataComponents.set(DataComponents.CUSTOM_MODEL_DATA, CustomModelData(customModelData))
+        }
 
         if (name != null) {
             dataComponents.set(DataComponents.ITEM_NAME, Utils.deserializeText(Utils.parsePlaceholders(player, name, kitId, kit, kitData)))
@@ -58,8 +73,6 @@ class KitItem(
 
         itemStack.count = amount
 
-        if (!player.addItem(itemStack)) {
-            player.serverLevel().addFreshEntity(ItemEntity(player.serverLevel(), player.x, player.y, player.z, itemStack))
-        }
+        return itemStack
     }
 }

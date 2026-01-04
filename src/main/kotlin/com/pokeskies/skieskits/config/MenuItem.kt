@@ -21,10 +21,9 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.component.CustomModelData
 import net.minecraft.world.item.component.ItemLore
 import net.minecraft.world.item.component.ResolvableProfile
-import java.util.Optional
-import java.util.UUID
+import java.util.*
 
-class MenuItem(
+open class MenuItem(
     val item: String = "minecraft:air",
     @JsonAdapter(FlexibleListAdaptorFactory::class)
     val slots: List<Int> = emptyList(),
@@ -135,5 +134,9 @@ class MenuItem(
         }
 
         return ItemStack(newItem.get(), amount)
+    }
+
+    override fun toString(): String {
+        return "MenuItem(item='$item', slots=$slots, amount=$amount, name=$name, lore=$lore, components=$components, customModelData=$customModelData)"
     }
 }

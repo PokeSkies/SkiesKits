@@ -3,7 +3,6 @@ package com.pokeskies.skieskits.commands.subcommands
 import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
-import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
@@ -41,14 +40,14 @@ class ClaimCommand : SubCommand {
             val kit = ConfigManager.KITS[kitId]
             if (kit == null) {
                 player.sendMessage(Utils.deserializeText(
-                    SkiesKits.INSTANCE.configManager.config.messages.kitNotFound.replace("%kit_name%", kitId)
+                    ConfigManager.CONFIG.messages.kitNotFound.replace("%kit_name%", kitId)
                 ))
                 return 1
             }
 
             if (!kit.hasPermission(player)) {
                 player.sendMessage(Utils.deserializeText(
-                    SkiesKits.INSTANCE.configManager.config.messages.kitNoPermission.replace("%kit_name%", kitId)
+                    ConfigManager.CONFIG.messages.kitNoPermission.replace("%kit_name%", kitId)
                 ))
                 return 1
             }
