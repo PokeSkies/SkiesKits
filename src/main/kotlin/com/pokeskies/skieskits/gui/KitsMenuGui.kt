@@ -2,16 +2,17 @@ package com.pokeskies.skieskits.gui
 
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
+import com.pokeskies.skieskits.config.KitMenuConfig
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 
-class KitsMenu(
-    player: ServerPlayer
-) : SimpleGui(ConfigManager.MENU_CONFIG.type.type, player, false) {
-    private val config = ConfigManager.MENU_CONFIG
+class KitsMenuGui(
+    player: ServerPlayer,
+    val config: KitMenuConfig
+) : SimpleGui(config.type.type, player, false) {
 
     init {
         refresh()

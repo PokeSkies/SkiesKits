@@ -15,11 +15,11 @@ import java.nio.file.StandardCopyOption
 object ConfigManager {
     private var assetPackage = "assets/${SkiesKits.MOD_ID}"
 
+    lateinit var CONFIG: MainConfig
+
     var KITS: BiMap<String, Kit> = HashBiMap.create()
     var PREVIEWS: BiMap<String, PreviewConfig> = HashBiMap.create()
-
-    lateinit var CONFIG: MainConfig
-    lateinit var MENU_CONFIG: KitMenuConfig
+    var MENUS: BiMap<String, KitMenuConfig> = HashBiMap.create()
 
     fun load() {
         copyDefaults()
@@ -28,8 +28,7 @@ object ConfigManager {
 
         loadKits()
         loadPreviews()
-
-        MENU_CONFIG = loadFile("menu.json", KitMenuConfig())
+        loadMenus()
     }
 
     fun copyDefaults() {
@@ -40,6 +39,7 @@ object ConfigManager {
         attemptDefaultFileCopy(classLoader, "config.json")
         attemptDefaultDirectoryCopy(classLoader, "kits")
         attemptDefaultDirectoryCopy(classLoader, "previews")
+        attemptDefaultDirectoryCopy(classLoader, "menus")
     }
 
     fun loadKits() {
@@ -58,7 +58,7 @@ object ConfigManager {
                             val kit = SkiesKits.INSTANCE.gsonPretty.fromJson(JsonParser.parseReader(jsonReader), Kit::class.java)
                             kit.id = id
                             KITS[id] = kit
-                            Utils.printInfo("Successfully read and loaded the file $fileName!")
+                            Utils.printInfo("Successfully read and loaded the Kit file $fileName!")
                         } catch (ex: Exception) {
                             Utils.printError("Error while trying to parse the file $fileName as a Kit!")
                             ex.printStackTrace()
@@ -90,7 +90,7 @@ object ConfigManager {
                                 JsonParser.parseReader(jsonReader),
                                 PreviewConfig::class.java
                             )
-                            Utils.printInfo("Successfully read and loaded the file $fileName!")
+                            Utils.printInfo("Successfully read and loaded the Preview Menu file $fileName!")
                         } catch (ex: Exception) {
                             Utils.printError("Error while trying to parse the file $fileName as a Preview Menu!")
                             ex.printStackTrace()
@@ -102,6 +102,38 @@ object ConfigManager {
             }
         } else {
             Utils.printError("The 'previews' directory either does not exist or is not a directory!")
+        }
+    }
+
+    fun loadMenus() {
+        MENUS.clear()
+
+        val dir = SkiesKits.INSTANCE.configDir.resolve("menus")
+        if (dir.exists() && dir.isDirectory) {
+            val files = dir.listFiles()
+            if (files != null) {
+                for (file in files) {
+                    val fileName = file.name
+                    if (file.isFile && fileName.contains(".json")) {
+                        val id = fileName.substring(0, fileName.lastIndexOf(".json"))
+                        val jsonReader = JsonReader(InputStreamReader(FileInputStream(file), Charsets.UTF_8))
+                        try {
+                            MENUS[id] = SkiesKits.INSTANCE.gsonPretty.fromJson(
+                                JsonParser.parseReader(jsonReader),
+                                KitMenuConfig::class.java
+                            )
+                            Utils.printInfo("Successfully read and loaded the Kit Menu file $fileName!")
+                        } catch (ex: Exception) {
+                            Utils.printError("Error while trying to parse the file $fileName as a Kit Menu!")
+                            ex.printStackTrace()
+                        }
+                    } else {
+                        Utils.printError("File $fileName is either not a file or is not a .json file!")
+                    }
+                }
+            }
+        } else {
+            Utils.printError("The 'menus' directory either does not exist or is not a directory!")
         }
     }
 

@@ -15,7 +15,7 @@
         18, 26,
         27, 35,
         36, 44,
-        45, 46, 47, 48, 49, 50, 51, 52, 53
+        46, 47, 48, 49, 50, 51, 52, 53
       ],
       "item": "minecraft:gray_stained_glass_pane",
       "components": {
@@ -45,6 +45,17 @@
       "actions": {
         "previous_page": {
           "type": "PREVIOUS_PAGE"
+        }
+      }
+    },
+    "back": {
+      "item": "minecraft:barrier",
+      "slots": [45],
+      "name": "<green>Back",
+      "actions": {
+        "open_menu": {
+          "type": "OPEN_MENU",
+          "id": "example_menu"
         }
       }
     }

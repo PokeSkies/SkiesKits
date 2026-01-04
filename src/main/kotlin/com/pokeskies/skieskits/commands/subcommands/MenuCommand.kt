@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.pokeskies.skieskits.config.ConfigManager
+import com.pokeskies.skieskits.gui.KitsMenuGui
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
@@ -13,13 +14,13 @@ import net.minecraft.commands.SharedSuggestionProvider
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.server.level.ServerPlayer
 
-class PreviewCommand : SubCommand {
+class MenuCommand : SubCommand {
     override fun build(): LiteralCommandNode<CommandSourceStack> {
-        return Commands.literal("preview")
-                .then(Commands.argument("kit", StringArgumentType.word())
-                    .requires(Permissions.require("skieskits.command.preview", 2))
+        return Commands.literal("menu")
+                .then(Commands.argument("menu", StringArgumentType.word())
+                    .requires(Permissions.require("skieskits.command.menu", 2))
                     .suggests { _, builder ->
-                        SharedSuggestionProvider.suggest(ConfigManager.KITS.keys.stream(), builder)
+                        SharedSuggestionProvider.suggest(ConfigManager.MENUS.keys.stream(), builder)
                     }
                     .then(Commands.argument("player", EntityArgument.player())
                         .executes { ctx ->
@@ -35,36 +36,20 @@ class PreviewCommand : SubCommand {
 
     companion object {
         fun execute(ctx: CommandContext<CommandSourceStack>, player: ServerPlayer): Int {
-            val kitId = StringArgumentType.getString(ctx, "kit")
+            val menuId = StringArgumentType.getString(ctx, "menu")
 
-            val kit = ConfigManager.KITS[kitId]
-            if (kit == null) {
+            val menuConfig = ConfigManager.MENUS[menuId]
+            if (menuConfig == null) {
                 ctx.source.sendMessage(Utils.deserializeText(
                     Utils.parsePlaceholders(
                         player,
-                        ConfigManager.CONFIG.messages.kitNotFound,
-                        kitId,
-                        null,
-                        null
+                        ConfigManager.CONFIG.messages.kitMenuError
                     )
                 ))
                 return 1
             }
 
-            val preview = kit.createPreview(player) ?: run {
-                ctx.source.sendMessage(Utils.deserializeText(
-                    Utils.parsePlaceholders(
-                        player,
-                        ConfigManager.CONFIG.messages.kitNoPreview,
-                        kitId,
-                        kit,
-                        null
-                    )
-                ))
-                return 1
-            }
-
-            preview.open()
+            KitsMenuGui(player, menuConfig).open()
 
             return 1
         }

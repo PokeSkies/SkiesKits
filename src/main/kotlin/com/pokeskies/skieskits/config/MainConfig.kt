@@ -8,6 +8,8 @@ class MainConfig(
     var debug: Boolean = false,
     var commands: List<String> = listOf("skieskits", "kits", "kit"),
     var economy: EconomyType = EconomyType.IMPACTOR,
+    @SerializedName("default_menu")
+    var defaultMenu: String = "",
     var storage: Storage = Storage(),
     val messages: Messages = Messages()
 ) {
@@ -65,12 +67,14 @@ class MainConfig(
         @SerializedName("kit_no_permission")
         val kitNoPermission: String = "<red>You cannot claim the kit %kit_name% because you do not have permission!",
         @SerializedName("kit_no_preview")
-        val kitNoPreview: String = "<red>The kit %kit_name% does not have a preview set up!"
+        val kitNoPreview: String = "<red>The kit %kit_name% does not have a preview set up!",
+        @SerializedName("kit_menu_error")
+        val kitMenuError: String = "<red>Could not open the kits menu! Please contact an administrator.",
     ) {
         override fun toString(): String {
             return "Messages(kit_not_found='$kitNotFound', kit_received='$kitReceived', kit_failed_uses='$kitFailedUses'," +
                     " kit_failed_cooldown='$kitFailedCooldown', kit_failed_requirements='$kitFailedRequirements'," +
-                    " kit_no_permission='$kitNoPermission', kit_no_preview='$kitNoPreview')"
+                    " kit_no_permission='$kitNoPermission', kit_no_preview='$kitNoPreview', kit_menu_error='$kitMenuError')"
         }
     }
 

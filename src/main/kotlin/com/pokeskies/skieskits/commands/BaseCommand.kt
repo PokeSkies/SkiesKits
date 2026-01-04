@@ -6,7 +6,7 @@ import com.mojang.brigadier.context.CommandContext
 import com.mojang.brigadier.tree.LiteralCommandNode
 import com.pokeskies.skieskits.commands.subcommands.*
 import com.pokeskies.skieskits.config.ConfigManager
-import com.pokeskies.skieskits.gui.KitsMenu
+import com.pokeskies.skieskits.gui.KitsMenuGui
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.commands.CommandSourceStack
@@ -41,6 +41,7 @@ class BaseCommand {
             ResetCooldownCommand().build(),
             CreateCommand().build(),
             PreviewCommand().build(),
+            MenuCommand().build(),
         )
 
         rootCommands.forEach { root ->
@@ -57,11 +58,27 @@ class BaseCommand {
                 return 0
             }
 
+            val menuConfig = ConfigManager.MENUS[ConfigManager.CONFIG.defaultMenu] ?: run {
+                ctx.source.sendMessage(Utils.deserializeText(
+                    Utils.parsePlaceholders(
+                        player,
+                        ConfigManager.CONFIG.messages.kitMenuError
+                    )
+                ))
+                Utils.printError("Default menu '${ConfigManager.CONFIG.defaultMenu}' not found as a valid configuration menu.")
+                return 0
+            }
+
             try {
-                KitsMenu(player).open()
+                KitsMenuGui(player, menuConfig).open()
             } catch (e: Exception) {
                 Utils.printError("An error occurred while opening the Kits menu for player ${player.name.string}: ${e.message}")
-                ctx.source.sendMessage(Utils.deserializeText("<red>An error occurred while opening the Kits menu. Please contact an administrator."))
+                ctx.source.sendMessage(Utils.deserializeText(
+                    Utils.parsePlaceholders(
+                        player,
+                        ConfigManager.CONFIG.messages.kitMenuError
+                    )
+                ))
                 return 0
             }
             return 1

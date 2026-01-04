@@ -21,7 +21,8 @@ enum class ActionType(val identifier: String, val clazz: Class<*>) {
     LAST_PAGE("last_page", LastPage::class.java),
     FIRST_PAGE("first_page", FirstPage::class.java),
     PREVIEW_KIT("preview_kit", PreviewKit::class.java),
-    CLOSE("close", Close::class.java);
+    CLOSE("close", Close::class.java),
+    OPEN_MENU("open_menu", OpenMenu::class.java),;
 
     companion object {
         fun valueOfAnyCase(name: String): ActionType? {

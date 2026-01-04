@@ -14,12 +14,12 @@ class PreviewKit(
     delay: Long = 0,
     chance: Double = 0.0,
     requirements: RequirementOptions? = RequirementOptions(),
-    val id: String,
+    val id: String = "",
 ) : Action(ActionType.PREVIEW_KIT, delay, chance, requirements) {
     override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
         Utils.printDebug("[ACTION - ${type.name}] Player(${player.gameProfile.name}) $this")
 
-        val kit = ConfigManager.KITS[kitId]
+        val kit = ConfigManager.KITS[id]
         if (kit == null) {
             Utils.printError("The kit $id was not a valid kit id.")
             return

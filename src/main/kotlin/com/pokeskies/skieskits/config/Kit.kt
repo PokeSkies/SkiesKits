@@ -5,7 +5,7 @@ import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.actions.ActionOptions
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
-import com.pokeskies.skieskits.gui.PreviewMenu
+import com.pokeskies.skieskits.gui.PreviewGui
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions
 import net.minecraft.server.level.ServerPlayer
@@ -133,13 +133,13 @@ class Kit(
         }
     }
 
-    fun createPreview(player: ServerPlayer): PreviewMenu? {
+    fun createPreview(player: ServerPlayer): PreviewGui? {
         return if (preview.id.isNotBlank()) {
             val previewConfig = ConfigManager.PREVIEWS[preview.id] ?: run {
                 Utils.printError("Kit $displayName references a preview menu with id ${preview.id} but it was not found!")
                 return null
             }
-            PreviewMenu(player, previewConfig, this)
+            PreviewGui(player, previewConfig, this)
         } else {
             null
         }

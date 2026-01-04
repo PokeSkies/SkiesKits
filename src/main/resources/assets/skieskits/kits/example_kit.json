@@ -5,6 +5,15 @@
   "on_join": false,
   "notifications": true,
   "permission": "skieskits.kit.example_kit",
+  "preview": {
+    "id": "example_preview",
+    "extras": [
+      {
+        "item": "minecraft:diamond",
+        "name": "<red>Brand New Diamond"
+      }
+    ]
+  },
   "items": [
     {
       "item": "minecraft:emerald",

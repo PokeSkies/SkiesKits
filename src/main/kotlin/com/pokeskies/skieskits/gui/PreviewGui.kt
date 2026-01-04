@@ -8,7 +8,7 @@ import eu.pb4.sgui.api.gui.SimpleGui
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 
-class PreviewMenu(
+class PreviewGui(
     player: ServerPlayer,
     val preview: PreviewConfig,
     val kit: Kit
