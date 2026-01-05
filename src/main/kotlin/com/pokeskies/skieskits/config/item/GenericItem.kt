@@ -1,14 +1,14 @@
-package com.pokeskies.skieskits.config
+package com.pokeskies.skieskits.config.item
 
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
 import com.mojang.authlib.properties.Property
 import com.mojang.authlib.properties.PropertyMap
 import com.pokeskies.skieskits.SkiesKits
+import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.FlexibleListAdaptorFactory
 import com.pokeskies.skieskits.utils.Utils
-import eu.pb4.sgui.api.elements.GuiElementBuilder
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.component.DataComponents
 import net.minecraft.core.registries.BuiltInRegistries
@@ -23,10 +23,8 @@ import net.minecraft.world.item.component.ItemLore
 import net.minecraft.world.item.component.ResolvableProfile
 import java.util.*
 
-open class MenuItem(
+open class GenericItem(
     val item: String = "minecraft:air",
-    @JsonAdapter(FlexibleListAdaptorFactory::class)
-    val slots: List<Int> = emptyList(),
     val amount: Int = 1,
     val name: String? = null,
     @JsonAdapter(FlexibleListAdaptorFactory::class)
@@ -36,8 +34,8 @@ open class MenuItem(
     @SerializedName("custom_model_data")
     val customModelData: Int? = null,
 ) {
-    fun createButton(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?): GuiElementBuilder {
-        val stack = createItem(player)
+    fun createItemStack(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?): ItemStack? {
+        val stack = getBaseItem(player) ?: return null
 
         if (components != null) {
             DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, components).result().ifPresent { result ->
@@ -70,11 +68,11 @@ open class MenuItem(
 
         stack.applyComponents(dataComponents.build())
 
-        return GuiElementBuilder.from(stack)
+        return stack
     }
 
-    private fun createItem(player: ServerPlayer): ItemStack {
-        if (item.isEmpty()) return ItemStack(Items.AIR, amount)
+    private fun getBaseItem(player: ServerPlayer): ItemStack? {
+        if (item.isEmpty()) return null
 
         val parsedItem = Utils.parsePlaceholders(player, item)
 
@@ -137,6 +135,6 @@ open class MenuItem(
     }
 
     override fun toString(): String {
-        return "MenuItem(item='$item', slots=$slots, amount=$amount, name=$name, lore=$lore, components=$components, customModelData=$customModelData)"
+        return "MenuItem(item='$item', amount=$amount, name=$name, lore=$lore, components=$components, customModelData=$customModelData)"
     }
 }

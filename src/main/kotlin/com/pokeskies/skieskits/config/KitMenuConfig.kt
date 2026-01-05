@@ -1,6 +1,7 @@
 package com.pokeskies.skieskits.config
 
 import com.google.gson.annotations.SerializedName
+import com.pokeskies.skieskits.config.item.MenuItem
 import com.pokeskies.skieskits.gui.GenericClickType
 import com.pokeskies.skieskits.gui.InventoryType
 

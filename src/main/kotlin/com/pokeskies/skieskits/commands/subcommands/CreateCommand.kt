@@ -6,7 +6,7 @@ import com.mojang.brigadier.tree.LiteralCommandNode
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.config.Kit
-import com.pokeskies.skieskits.config.KitItem
+import com.pokeskies.skieskits.config.item.KitItem
 import com.pokeskies.skieskits.utils.SubCommand
 import com.pokeskies.skieskits.utils.Utils
 import me.lucko.fabric.api.permissions.v0.Permissions

@@ -2,6 +2,7 @@ package com.pokeskies.skieskits.config
 
 import com.google.gson.annotations.JsonAdapter
 import com.google.gson.annotations.SerializedName
+import com.pokeskies.skieskits.config.item.MenuItem
 import com.pokeskies.skieskits.utils.FlexibleListAdaptorFactory
 
 class KitMenuOptions(

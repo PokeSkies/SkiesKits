@@ -1,4 +1,4 @@
-package com.pokeskies.skieskits.config
+package com.pokeskies.skieskits.config.item
 
 import com.pokeskies.skieskits.config.actions.Action
 import net.minecraft.nbt.CompoundTag

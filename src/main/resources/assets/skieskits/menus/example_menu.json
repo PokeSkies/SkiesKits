@@ -23,6 +23,7 @@
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
           "<green><b>AVAILABLE",
+          "",
           " <gray>- <green>Left-Click to claim this kit",
           " <gray>- <red>Right-Click to preview this kit"
         ]
@@ -38,6 +39,7 @@
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
           "<red><b>ON COOLDOWN",
+          "",
           " <gray>- <red>Right-Click to preview this kit"
         ]
       },
@@ -52,6 +54,7 @@
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
           "<red><b>NO PERMISSION",
+          "",
           " <gray>- <red>Right-Click to preview this kit"
         ]
       },
@@ -66,6 +69,7 @@
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
           "<red><b>MAX USES",
+          "",
           " <gray>- <red>Right-Click to preview this kit"
         ]
       },
@@ -80,6 +84,7 @@
           " <gold>- <gray>Time Remaining: <white>%kit_time_remaining%",
           "",
           "<red><b>REQUIREMENTS NOT MET",
+          "",
           " <gray>- <red>Right-Click to preview this kit"
         ]
       }
