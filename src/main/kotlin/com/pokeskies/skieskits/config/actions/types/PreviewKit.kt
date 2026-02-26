@@ -8,6 +8,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 class PreviewKit(
@@ -16,7 +17,7 @@ class PreviewKit(
     requirements: RequirementOptions? = RequirementOptions(),
     val id: String = "",
 ) : Action(ActionType.PREVIEW_KIT, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
         Utils.printDebug("[ACTION - ${type.name}] Player(${player.gameProfile.name}) $this")
 
         val kit = ConfigManager.KITS[id]
@@ -37,3 +38,4 @@ class PreviewKit(
         return "PreviewKit(id=$id)"
     }
 }
+

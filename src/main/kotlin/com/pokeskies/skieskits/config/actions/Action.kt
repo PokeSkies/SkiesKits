@@ -6,6 +6,7 @@ import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Scheduler
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 import kotlin.random.Random
 
@@ -16,7 +17,7 @@ abstract class Action(
     val requirements: RequirementOptions? = RequirementOptions()
 ) {
     // Will do a chance check and then apply any delay
-    open fun attemptExecution(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui? = null) {
+    open fun attemptExecution(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui? = null, commandSourceOverride: CommandSourceStack? = null) {
         if (chance > 0.0 && chance < 1.0) {
             val roll = Random.nextFloat()
             Utils.printDebug("Attempting chance roll for $type Action. Result is: $roll <= $chance = ${roll <= chance}.")
@@ -27,17 +28,17 @@ abstract class Action(
         }
 
         if (delay <= 0) {
-            executeAction(player, kitId, kit, kitData, gui)
+            executeAction(player, kitId, kit, kitData, gui, commandSourceOverride)
             return
         }
 
         Utils.printDebug("Delay found for $type Action. Waiting $delay ticks before execution.")
         Scheduler.scheduleTask(delay.toInt(), Scheduler.DelayedAction({
-            executeAction(player, kitId, kit, kitData, gui)
+            executeAction(player, kitId, kit, kitData, gui, commandSourceOverride)
         }))
     }
 
-    abstract fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?)
+    abstract fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?)
 
     fun checkRequirements(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData): Boolean {
         if (requirements != null) {
@@ -50,18 +51,18 @@ abstract class Action(
         return true
     }
 
-    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         if (requirements != null) {
             for ((_, action) in requirements.denyActions) {
-                action.attemptExecution(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
             }
         }
     }
 
-    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         if (requirements != null) {
             for ((_, action) in requirements.successActions) {
-                action.attemptExecution(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
             }
         }
     }
@@ -70,3 +71,4 @@ abstract class Action(
         return "Action(type=$type, requirements=$requirements)"
     }
 }
+

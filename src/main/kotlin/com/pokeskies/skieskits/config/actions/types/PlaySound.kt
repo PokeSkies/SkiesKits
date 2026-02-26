@@ -8,6 +8,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.sounds.SoundEvent
 
@@ -19,7 +20,7 @@ class PlaySound(
     private val volume: Float = 1.0F,
     private val pitch: Float = 1.0F
 ) : Action(ActionType.PLAYSOUND, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (sound == null) {
             Utils.printError("There was an error while executing a Sound Action for player ${player.name}: Sound was somehow null?")
@@ -34,3 +35,4 @@ class PlaySound(
         return "PlaySound(type=$type, requirements=$requirements, sound=$sound, volume=$volume, pitch=$pitch)"
     }
 }
+

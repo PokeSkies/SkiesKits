@@ -52,11 +52,14 @@ class GiveCommand : SubCommand {
                 return 1
             }
 
+            val senderSource = ctx.source.player?.createCommandSourceStack() ?: ctx.source
+
             for (player in players) {
-                kit.claim(kitId, player, bypass, bypass)
+                kit.claim(kitId, player, bypass, bypass, commandSourceOverride = senderSource)
             }
 
             return 1
         }
     }
 }
+

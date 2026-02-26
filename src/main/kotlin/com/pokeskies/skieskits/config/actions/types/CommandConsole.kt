@@ -8,6 +8,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 class CommandConsole(
@@ -16,7 +17,7 @@ class CommandConsole(
     requirements: RequirementOptions? = RequirementOptions(),
     private val commands: List<String> = emptyList()
 ) : Action(ActionType.COMMAND_CONSOLE, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (SkiesKits.INSTANCE.server.commands == null) {
             Utils.printError("There was an error while executing an action for player ${player.name}: Server was somehow null on command execution?")
@@ -35,3 +36,4 @@ class CommandConsole(
         return "CommandConsole(type=$type, requirements=$requirements, commands=$commands)"
     }
 }
+

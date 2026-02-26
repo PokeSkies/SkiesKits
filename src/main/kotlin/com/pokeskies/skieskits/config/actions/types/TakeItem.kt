@@ -8,6 +8,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
@@ -25,7 +26,7 @@ class TakeItem(
     val nbt: CompoundTag? = null,
     val strict: Boolean = true
 ) : Action(ActionType.TAKE_ITEM, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         var removed = 0
         for (i in 0 until player.inventory.containerSize) {
@@ -76,3 +77,4 @@ class TakeItem(
         return "TakeItem(item=$item, amount=$amount, nbt=$nbt, strict=$strict)"
     }
 }
+

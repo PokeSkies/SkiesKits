@@ -5,6 +5,7 @@ import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 abstract class Requirement(
@@ -29,15 +30,15 @@ abstract class Requirement(
         return true
     }
 
-    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in successActions) {
-            action.attemptExecution(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
         }
     }
 
-    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in denyActions) {
-            action.attemptExecution(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
         }
     }
 
@@ -45,3 +46,4 @@ abstract class Requirement(
         return "Requirement(type=$type, comparison=$comparison, denyActions=$denyActions, successActions=$successActions)"
     }
 }
+
