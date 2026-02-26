@@ -31,11 +31,11 @@ More information on configuration can be found on the [Wiki](https://github.com/
 | /kits reload                       | Reload SkiesKits                                                               | skieskits.command.reload        |
 | /kits debug                        | Toggle the debug mode for more insight into errors                             | skieskits.command.debug         |
 | /kits                              | Opens the kits menu system                                                     | skieskits.command.base          |
-| /kits <kit>                        | Attempts to claim a kit                                                        | skieskits.command.claim         |
-| /kits claim <kit>                  | Attempts to claim a kit                                                        | skieskits.command.claim         |
-| /kits give <kit> <player> [bypass] | Attempts to give a player a kit. Set bypass to true to bypass any requirements | skieskits.command.give          |
-| /kits resetusage <player> [kit]    | Reset a player's kit usage for all kits or define a specific one               | skieskits.command.resetusage    |
-| /kits resetcooldown <player> [kit] | Reset a player's kit cooldown for all kits or define a specific one            | skieskits.command.resetcooldown |
+| /kits \<kit\>                        | Attempts to claim a kit                                                        | skieskits.command.claim         |
+| /kits claim \<kit\>                  | Attempts to claim a kit                                                        | skieskits.command.claim         |
+| /kits give \<kit\> \<player\> [bypass] | Attempts to give a player a kit. Set bypass to true to bypass any requirements | skieskits.command.give          |
+| /kits resetusage \<player\> [kit]    | Reset a player's kit usage for all kits or define a specific one               | skieskits.command.resetusage    |
+| /kits resetcooldown \<player\> [kit] | Reset a player's kit cooldown for all kits or define a specific one            | skieskits.command.resetcooldown |
 
 ## Planned Features
 - Better/more debugging and error handling
