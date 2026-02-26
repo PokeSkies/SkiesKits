@@ -3,7 +3,7 @@
   "commands": [
     "skieskits", "kits", "kit"
   ],
-  "economy": "IMPACTOR",
+  "economy": "PEBBLES",
   "default_menu": "example_menu",
   "storage": {
     "type": "SQLITE",

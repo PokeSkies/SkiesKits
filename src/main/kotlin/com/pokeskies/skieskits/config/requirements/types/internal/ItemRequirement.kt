@@ -10,7 +10,7 @@ import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.ItemStack
 import kotlin.jvm.optionals.getOrNull
@@ -30,7 +30,8 @@ class ItemRequirement(
         val targetAmount = amount ?: 1
         var amountFound = 0
 
-        for (itemStack in player.inventory.items) {
+        for (i in 0 until player.inventory.containerSize) {
+            val itemStack = player.inventory.getItem(i)
             if (!itemStack.isEmpty) {
                 if (isItem(itemStack)) {
                     amountFound += itemStack.count
@@ -63,8 +64,8 @@ class ItemRequirement(
     }
 
     private fun isItem(checkItem: ItemStack): Boolean {
-        val newItem = BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(item))
-        if (newItem.isEmpty) {
+        val newItem = BuiltInRegistries.ITEM.getOptional(Identifier.parse(item))
+        if (newItem.isEmpty()) {
             Utils.printDebug("[REQUIREMENT - ${type?.name}] Failed due to an empty or invalid item ID. Item ID: $item, returned: $newItem")
             return false
         }
@@ -76,7 +77,10 @@ class ItemRequirement(
         val nbtCopy = nbt?.copy()
 
         if (strict && nbtCopy != null) {
-            val checkNBT = DataComponentPatch.CODEC.encodeStart(SkiesKits.INSTANCE.nbtOpts, checkItem.componentsPatch).result().getOrNull() ?: return false
+            val checkNBT = DataComponentPatch.CODEC.encodeStart(SkiesKits.INSTANCE.nbtOpts, checkItem.componentsPatch)
+                .resultOrPartial { error ->
+                    Utils.printError("Failed to encode ItemRequirement components for item '$item': $error")
+                }.getOrNull() ?: return false
 
             if (checkNBT != nbtCopy) {
                 Utils.printDebug("[REQUIREMENT - ${type?.name}] Failed due to NBT not matching. Looking for: $nbtCopy, but found: $checkNBT")

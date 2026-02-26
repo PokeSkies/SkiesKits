@@ -43,7 +43,7 @@ class PreviewGui(
                 setSlot(slot, button
                     .setCallback { clickType ->
                         item.actions.forEach { (_, action) ->
-                            action.executeAction(player, kitId = kit.id, kit = kit, kitData = null, gui = this)
+                            action.executeAction(player, kitId = kit.id, kit = kit, kitData = null, gui = this, commandSourceOverride = null)
                         }
                     }.build())
             }
@@ -90,6 +90,7 @@ class PreviewGui(
     }
 
     override fun getTitle(): Component {
-        return Utils.deserializeText(Utils.parsePlaceholders(player, preview.title, kit.id, kit, null))
+        return Utils.deserializeNativeText(Utils.parsePlaceholders(player, preview.title, kit.id, kit, null))
     }
 }
+

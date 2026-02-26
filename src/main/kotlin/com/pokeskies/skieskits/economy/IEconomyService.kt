@@ -1,6 +1,5 @@
 package com.pokeskies.skieskits.economy
 
-import com.pokeskies.skieskits.economy.services.ImpactorEconomyService
 import com.pokeskies.skieskits.economy.services.PebblesEconomyService
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.server.level.ServerPlayer
@@ -17,7 +16,6 @@ interface IEconomyService {
 
             return try {
                 when (economyType) {
-                    EconomyType.IMPACTOR -> ImpactorEconomyService()
                     EconomyType.PEBBLES -> PebblesEconomyService()
                 }
             } catch (ex: Exception) {

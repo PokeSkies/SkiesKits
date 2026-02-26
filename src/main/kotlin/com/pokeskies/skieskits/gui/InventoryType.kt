@@ -1,6 +1,5 @@
 package com.pokeskies.skieskits.gui
 
-import com.cobblemon.mod.common.util.isInt
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
@@ -39,7 +38,7 @@ enum class InventoryType(val type: MenuType<*>, val slots: Int) {
 
         override fun read(reader: JsonReader): InventoryType {
             val value = reader.nextString()
-            if (value.isInt()) {
+            if (value.toIntOrNull() != null) {
                 val rows = value.toInt()
                 return when (rows) {
                     1 -> GENERIC_9x1

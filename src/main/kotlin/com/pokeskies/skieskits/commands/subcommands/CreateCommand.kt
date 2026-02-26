@@ -46,13 +46,13 @@ class CreateCommand : SubCommand {
                 return 0
             }
 
-            val items = player.inventory.items
-                .filter {
-                    !it.isEmpty
-                }.map {
+            val items = (0 until player.inventory.containerSize)
+                .map { player.inventory.getItem(it) }
+                .filter { !it.isEmpty }
+                .map {
                     val dataResult = DataComponentPatch.CODEC.encodeStart(SkiesKits.INSTANCE.nbtOpts, it.componentsPatch)
                     KitItem(
-                        item = BuiltInRegistries.ITEM.getKey(it.item).asString(),
+                        item = BuiltInRegistries.ITEM.getKey(it.item).toString(),
                         amount = it.count,
                         components = if (dataResult.isSuccess) dataResult.result().getOrNull() as CompoundTag else null,
                     )

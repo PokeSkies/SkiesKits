@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.config.actions.Action
 import com.pokeskies.skieskits.data.KitData
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 class RequirementOptions(
@@ -13,15 +14,15 @@ class RequirementOptions(
     @SerializedName("success_actions")
     val successActions: Map<String, Action> = emptyMap()
 ) {
-    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeDenyActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in denyActions) {
-            action.attemptExecution(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
         }
     }
 
-    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeSuccessActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in successActions) {
-            action.attemptExecution(player, kitId, kit, kitData)
+            action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
         }
     }
 
@@ -29,3 +30,4 @@ class RequirementOptions(
         return "RequirementOptions(requirements=$requirements, denyActions=$denyActions, successActions=$successActions)"
     }
 }
+

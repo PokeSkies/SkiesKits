@@ -25,7 +25,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.ServerSt
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents.ServerStopped
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents
 import net.fabricmc.loader.api.FabricLoader
-import net.kyori.adventure.platform.fabric.FabricServerAudiences
+import net.kyori.adventure.platform.modcommon.MinecraftServerAudiences
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.NbtOps
@@ -56,7 +56,7 @@ class SkiesKits : ModInitializer {
     var economyService: IEconomyService? = null
     lateinit var placeholderManager: PlaceholderManager
 
-    var adventure: FabricServerAudiences? = null
+    var adventure: MinecraftServerAudiences? = null
     lateinit var server: MinecraftServer
     lateinit var nbtOpts: RegistryOps<Tag>
 
@@ -97,7 +97,7 @@ class SkiesKits : ModInitializer {
             .build()
 
         ServerLifecycleEvents.SERVER_STARTING.register(ServerStarting { server: MinecraftServer ->
-            this.adventure = FabricServerAudiences.of(
+            this.adventure = MinecraftServerAudiences.of(
                 server
             )
             this.server = server

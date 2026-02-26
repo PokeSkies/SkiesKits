@@ -8,10 +8,11 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.core.component.DataComponentPatch
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.resources.ResourceLocation
+import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.ItemStack
 
@@ -23,9 +24,9 @@ class GiveItem(
     val amount: Int = 1,
     val nbt: CompoundTag? = null
 ) : Action(ActionType.GIVE_ITEM, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
-        val newItem = BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(item))
-        if (newItem.isEmpty) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
+        val newItem = BuiltInRegistries.ITEM.getOptional(Identifier.parse(item))
+        if (newItem.isEmpty()) {
             Utils.printDebug("[ACTION - ${type.name}] Failed due to an empty or invalid item ID. Item ID: $item, returned: $newItem")
             return
         }
@@ -34,7 +35,11 @@ class GiveItem(
         val nbtCopy = nbt?.copy()
 
         if (nbtCopy != null) {
-            DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbtCopy).result().ifPresent { result ->
+            val decoded = DataComponentPatch.CODEC.decode(SkiesKits.INSTANCE.nbtOpts, nbtCopy)
+                .resultOrPartial { error ->
+                    Utils.printError("Failed to decode GiveItem components for item '$item': $error | nbt=$nbtCopy")
+                }
+            decoded.ifPresent { result ->
                 itemStack.applyComponents(result.first)
             }
         }
@@ -49,3 +54,4 @@ class GiveItem(
     }
 
 }
+

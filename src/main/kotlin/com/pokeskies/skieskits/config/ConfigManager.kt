@@ -8,7 +8,6 @@ import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.utils.Utils
 import java.io.*
 import java.nio.file.Files
-import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 
 
@@ -37,9 +36,9 @@ object ConfigManager {
         SkiesKits.INSTANCE.configDir.mkdirs()
 
         attemptDefaultFileCopy(classLoader, "config.json")
-        attemptDefaultDirectoryCopy(classLoader, "kits")
-        attemptDefaultDirectoryCopy(classLoader, "previews")
-        attemptDefaultDirectoryCopy(classLoader, "menus")
+        attemptDefaultFileCopy(classLoader, "kits/example_kit.json")
+        attemptDefaultFileCopy(classLoader, "previews/example_preview.json")
+        attemptDefaultFileCopy(classLoader, "menus/example_menu.json")
     }
 
     fun loadKits() {
@@ -179,34 +178,13 @@ object ConfigManager {
         val file = SkiesKits.INSTANCE.configDir.resolve(fileName)
         if (!file.exists()) {
             try {
+                file.parentFile?.mkdirs()
                 val stream = classLoader.getResourceAsStream("${assetPackage}/$fileName")
                     ?: throw NullPointerException("File not found $fileName")
 
                 Files.copy(stream, file.toPath(), StandardCopyOption.REPLACE_EXISTING)
             } catch (e: Exception) {
                 Utils.printError("Failed to copy the default file '$fileName': $e")
-            }
-        }
-    }
-
-    private fun attemptDefaultDirectoryCopy(classLoader: ClassLoader, directoryName: String) {
-        val directory = SkiesKits.INSTANCE.configDir.resolve(directoryName)
-        if (!directory.exists()) {
-            directory.mkdirs()
-            try {
-                val sourceUrl = classLoader.getResource("${assetPackage}/$directoryName")
-                    ?: throw NullPointerException("Directory not found $directoryName")
-                val sourcePath = Paths.get(sourceUrl.toURI())
-
-                Files.walk(sourcePath).use { stream ->
-                    stream.filter { Files.isRegularFile(it) }
-                        .forEach { sourceFile ->
-                            val destinationFile = directory.resolve(sourcePath.relativize(sourceFile).toString())
-                            Files.copy(sourceFile, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                        }
-                }
-            } catch (e: Exception) {
-                Utils.printError("Failed to copy the default directory '$directoryName': " + e.message)
             }
         }
     }

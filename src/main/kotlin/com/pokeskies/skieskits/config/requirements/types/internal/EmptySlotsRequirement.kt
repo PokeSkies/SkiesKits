@@ -19,7 +19,8 @@ class EmptySlotsRequirement(
 
         var amountFound = 0
 
-        for (itemStack in player.inventory.items) {
+        for (i in 0 until player.inventory.containerSize) {
+            val itemStack = player.inventory.getItem(i)
             if (itemStack.isEmpty) {
                 amountFound++
             }

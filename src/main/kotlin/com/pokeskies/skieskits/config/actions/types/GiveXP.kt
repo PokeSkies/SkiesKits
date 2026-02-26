@@ -7,6 +7,7 @@ import com.pokeskies.skieskits.config.requirements.RequirementOptions
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 class GiveXP(
@@ -16,7 +17,7 @@ class GiveXP(
     private val amount: Int = 0,
     private val level: Boolean = false
 ) : Action(ActionType.GIVE_XP, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
         Utils.printDebug("Attempting to execute a ${type.identifier} Action: $this")
         if (level) {
             player.giveExperienceLevels(amount)
@@ -29,3 +30,4 @@ class GiveXP(
         return "GiveXP(type=$type, requirements=$requirements, amount=$amount, level=$level)"
     }
 }
+

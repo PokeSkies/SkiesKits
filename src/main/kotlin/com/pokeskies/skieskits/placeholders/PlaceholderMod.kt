@@ -3,7 +3,6 @@ package com.pokeskies.skieskits.placeholders
 import net.fabricmc.loader.api.FabricLoader
 
 enum class PlaceholderMod(val modId: String) {
-    IMPACTOR("impactor"),
     PLACEHOLDERAPI("placeholder-api"),
     MINIPLACEHOLDERS("miniplaceholders");
 

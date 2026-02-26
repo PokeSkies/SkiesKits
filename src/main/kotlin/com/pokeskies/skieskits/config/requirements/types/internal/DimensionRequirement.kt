@@ -19,7 +19,7 @@ class DimensionRequirement(
 
         Utils.printDebug("Checking a ${type?.identifier} Requirement with id='$id': $this")
 
-        val value = id.equals(player.serverLevel().dimension().location().toString(), true)
+        val value = id.equals(player.level().dimension().identifier().toString(), true)
         return if (comparison == ComparisonType.NOT_EQUALS) !value else value
     }
 

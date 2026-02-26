@@ -9,7 +9,6 @@ enum class EconomyType(
     val identifier: String,
     val modId: String
 ) {
-    IMPACTOR("impactor", "impactor"),
     PEBBLES("pebbles", "pebbles-economy");
 
     fun isModPresent() : Boolean {
@@ -34,8 +33,8 @@ enum class EconomyType(
             val economyType = valueOfAnyCase(json.asString)
 
             if (economyType == null) {
-                Utils.printError("Could not deserialize EconomyType '${json.asString}'! Falling back to IMPACTOR")
-                return IMPACTOR
+                Utils.printError("Could not deserialize EconomyType '${json.asString}'! Falling back to PEBBLES")
+                return PEBBLES
             }
 
             return economyType

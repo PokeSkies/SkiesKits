@@ -9,6 +9,7 @@ import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.gui.KitsMenuGui
 import com.pokeskies.skieskits.utils.Utils
 import eu.pb4.sgui.api.gui.SimpleGui
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 class OpenMenu(
@@ -17,7 +18,7 @@ class OpenMenu(
     requirements: RequirementOptions? = RequirementOptions(),
     val id: String = ""
 ) : Action(ActionType.FIRST_PAGE, delay, chance, requirements) {
-    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?) {
+    override fun executeAction(player: ServerPlayer, kitId: String?, kit: Kit?, kitData: KitData?, gui: SimpleGui?, commandSourceOverride: CommandSourceStack?) {
         Utils.printDebug("[ACTION - ${type.name}] Player(${player.gameProfile.name}) $this")
 
         val menuConfig = ConfigManager.MENUS[id]
@@ -33,3 +34,4 @@ class OpenMenu(
         return "OpenMenu()"
     }
 }
+

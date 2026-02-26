@@ -3,6 +3,7 @@ package com.pokeskies.skieskits.config.actions
 import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
+import net.minecraft.commands.CommandSourceStack
 import net.minecraft.server.level.ServerPlayer
 
 class ActionOptions(
@@ -16,57 +17,57 @@ class ActionOptions(
     @SerializedName("failed_requirements")
     val failedRequirements: Map<String, Action> = emptyMap()
 ) {
-    fun executeClaimedActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeClaimedActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in claimed) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
-                action.attemptExecution(player, kitId, kit, kitData)
-                action.executeSuccessActions(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
+                action.executeSuccessActions(player, kitId, kit, kitData, commandSourceOverride)
             } else {
-                action.executeDenyActions(player, kitId, kit, kitData)
+                action.executeDenyActions(player, kitId, kit, kitData, commandSourceOverride)
             }
         }
     }
 
-    fun executeCooldownActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeCooldownActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in onCooldown) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
-                action.attemptExecution(player, kitId, kit, kitData)
-                action.executeSuccessActions(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
+                action.executeSuccessActions(player, kitId, kit, kitData, commandSourceOverride)
             } else {
-                action.executeDenyActions(player, kitId, kit, kitData)
+                action.executeDenyActions(player, kitId, kit, kitData, commandSourceOverride)
             }
         }
     }
 
-    fun executePermissionActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executePermissionActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in noPermission) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
-                action.attemptExecution(player, kitId, kit, kitData)
-                action.executeSuccessActions(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
+                action.executeSuccessActions(player, kitId, kit, kitData, commandSourceOverride)
             } else {
-                action.executeDenyActions(player, kitId, kit, kitData)
+                action.executeDenyActions(player, kitId, kit, kitData, commandSourceOverride)
             }
         }
     }
 
-    fun executeUsesActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeUsesActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in maxUses) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
-                action.attemptExecution(player, kitId, kit, kitData)
-                action.executeSuccessActions(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
+                action.executeSuccessActions(player, kitId, kit, kitData, commandSourceOverride)
             } else {
-                action.executeDenyActions(player, kitId, kit, kitData)
+                action.executeDenyActions(player, kitId, kit, kitData, commandSourceOverride)
             }
         }
     }
 
-    fun executeRequirementsActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData) {
+    fun executeRequirementsActions(player: ServerPlayer, kitId: String, kit: Kit, kitData: KitData, commandSourceOverride: CommandSourceStack? = null) {
         for ((id, action) in failedRequirements) {
             if (action.checkRequirements(player, kitId, kit, kitData)) {
-                action.attemptExecution(player, kitId, kit, kitData)
-                action.executeSuccessActions(player, kitId, kit, kitData)
+                action.attemptExecution(player, kitId, kit, kitData, commandSourceOverride = commandSourceOverride)
+                action.executeSuccessActions(player, kitId, kit, kitData, commandSourceOverride)
             } else {
-                action.executeDenyActions(player, kitId, kit, kitData)
+                action.executeDenyActions(player, kitId, kit, kitData, commandSourceOverride)
             }
         }
     }
@@ -75,3 +76,4 @@ class ActionOptions(
         return "ActionOptions(claimed=$claimed, onCooldown=$onCooldown, noPermission=$noPermission, maxUses=$maxUses, failedRequirements=$failedRequirements)"
     }
 }
+

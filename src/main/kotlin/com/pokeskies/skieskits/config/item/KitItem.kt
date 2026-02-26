@@ -18,7 +18,7 @@ class KitItem(
         val itemStack = createItemStack(player, kitId, kit, kitData) ?: return
 
         if (!player.addItem(itemStack)) {
-            player.serverLevel().addFreshEntity(ItemEntity(player.serverLevel(), player.x, player.y, player.z, itemStack))
+            player.level().addFreshEntity(ItemEntity(player.level(), player.x, player.y, player.z, itemStack))
         }
     }
 }

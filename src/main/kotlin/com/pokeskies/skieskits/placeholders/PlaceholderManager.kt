@@ -3,7 +3,6 @@ package com.pokeskies.skieskits.placeholders
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.placeholders.services.DefaultPlaceholderService
-import com.pokeskies.skieskits.placeholders.services.ImpactorPlaceholderService
 import com.pokeskies.skieskits.placeholders.services.MiniPlaceholdersService
 import com.pokeskies.skieskits.placeholders.services.PlaceholderAPIService
 import net.minecraft.server.level.ServerPlayer
@@ -30,7 +29,6 @@ class PlaceholderManager {
 
     private fun getServiceForType(placeholderMod: PlaceholderMod): IPlaceholderService {
         return when (placeholderMod) {
-            PlaceholderMod.IMPACTOR -> ImpactorPlaceholderService()
             PlaceholderMod.PLACEHOLDERAPI -> PlaceholderAPIService()
             PlaceholderMod.MINIPLACEHOLDERS -> MiniPlaceholdersService()
         }

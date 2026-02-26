@@ -114,6 +114,6 @@ class KitsMenuGui(
     }
 
     override fun getTitle(): Component {
-        return Utils.deserializeText(Utils.parsePlaceholders(player, config.title, null, null, null))
+        return Utils.deserializeNativeText(Utils.parsePlaceholders(player, config.title, null, null, null))
     }
 }

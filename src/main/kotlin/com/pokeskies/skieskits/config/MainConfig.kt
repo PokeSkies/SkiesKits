@@ -7,7 +7,7 @@ import com.pokeskies.skieskits.storage.StorageType
 class MainConfig(
     var debug: Boolean = false,
     var commands: List<String> = listOf("skieskits", "kits", "kit"),
-    var economy: EconomyType = EconomyType.IMPACTOR,
+    var economy: EconomyType = EconomyType.PEBBLES,
     @SerializedName("default_menu")
     var defaultMenu: String = "",
     var storage: Storage = Storage(),

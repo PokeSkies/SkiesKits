@@ -3,7 +3,7 @@
 plugins {
     java
     idea
-    id("quiet-fabric-loom") version "1.10-SNAPSHOT"
+    id("fabric-loom") version "1.13.3"
     id("org.jetbrains.kotlin.jvm").version("2.2.0")
 }
 
@@ -11,7 +11,9 @@ val modId = project.properties["mod_id"].toString()
 version = project.properties["version"].toString()
 group = project.properties["group"].toString()
 
-base.archivesBaseName = project.properties["mod_name"].toString()
+base {
+    archivesName.set(project.properties["mod_name"].toString())
+}
 
 val minecraftVersion = project.properties["minecraft_version"].toString()
 
@@ -32,12 +34,12 @@ repositories {
         mavenContent { snapshotsOnly() }
     }
     maven("https://oss.sonatype.org/content/repositories/snapshots")
-    maven("https://maven.impactdev.net/repository/development/")
     maven("https://repo.lucko.me")
     maven("https://maven.pokeskies.com/releases/")
 }
 
 loom {
+    enableModProvidedJavadoc.set(false)
     splitEnvironmentSourceSets()
     mods {
         create(modId) {
@@ -54,17 +56,13 @@ configurations {
 
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
-    mappings(loom.layered {
-        officialMojangMappings()
-        // TODO: Fix hardcoded minecraft version once Parchment updates
-        parchment("org.parchmentmc.data:parchment-1.21:${project.properties["parchment_version"]}")
-    })
+    mappings(loom.officialMojangMappings())
 
     modImplementation("net.fabricmc:fabric-loader:${project.properties["loader_version"].toString()}")
     modImplementation("net.fabricmc:fabric-language-kotlin:${project.properties["fabric_kotlin_version"].toString()}")
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.properties["fabric_version"].toString()}")
 
-    modImplementation(include("net.kyori:adventure-platform-fabric:5.14.2")!!)
+    modImplementation(include("net.kyori:adventure-platform-fabric:6.8.0")!!)
 
     modImplementation("me.lucko:fabric-permissions-api:0.3.1")?.let {
         include(it)
@@ -72,21 +70,16 @@ dependencies {
 
     modImplementation("eu.pb4:placeholder-api:2.4.1+1.21")
 
-    modImplementation("eu.pb4:sgui:1.6.1+1.21.1")?.let {
+    modImplementation("eu.pb4:sgui:1.12.0+1.21.11")?.let {
         include(it)
     }
 
     modImplementation("io.github.miniplaceholders:miniplaceholders-api:2.2.3")
     modImplementation("io.github.miniplaceholders:miniplaceholders-kotlin-ext:2.2.3")
 
-    modImplementation("net.impactdev.impactor:common:5.3.0+1.21.1-SNAPSHOT")
-    modImplementation("net.impactdev.impactor.api:economy:5.3.0-SNAPSHOT")
-    modImplementation("net.impactdev.impactor.api:text:5.3.0-SNAPSHOT")
-
     implementation(include("org.graalvm.sdk:graal-sdk:22.3.0")!!)
     implementation(include("org.graalvm.truffle:truffle-api:22.3.0")!!)
 
-    modImplementation("com.cobblemon:fabric:1.7.1+1.21.1")
     modImplementation("com.github.plan-player-analytics:Plan:5.6.2883")
 
     implementation(include("org.mongodb:mongodb-driver-sync:4.11.0")!!)
@@ -129,6 +122,7 @@ java {
 }
 
 tasks.withType<AbstractArchiveTask> {
+    duplicatesStrategy = org.gradle.api.file.DuplicatesStrategy.EXCLUDE
     from("LICENSE") {
         rename { "${it}_${modId}" }
     }

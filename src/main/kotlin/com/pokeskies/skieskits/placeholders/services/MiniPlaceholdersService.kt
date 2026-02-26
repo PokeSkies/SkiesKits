@@ -25,8 +25,7 @@ class MiniPlaceholdersService : IPlaceholderService {
             MiniPlaceholders.getAudiencePlaceholders(player)
         )
 
-        return SkiesKits.INSTANCE.adventure!!.toNative(
-            miniMessage.deserialize(text, resolver)
-        ).string
+        val parsed = miniMessage.deserialize(text, resolver)
+        return SkiesKits.INSTANCE.adventure?.asNative(parsed)?.string ?: text
     }
 }

@@ -3,6 +3,7 @@ package com.pokeskies.skieskits.config
 import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.actions.ActionOptions
+import net.minecraft.commands.CommandSourceStack
 import com.pokeskies.skieskits.config.item.KitItem
 import com.pokeskies.skieskits.config.item.MenuItem
 import com.pokeskies.skieskits.config.requirements.RequirementOptions
@@ -29,7 +30,7 @@ class Kit(
 ) {
     @Transient lateinit var id: String
 
-    fun claim(kitId: String, player: ServerPlayer, bypassChecks: Boolean = false, bypassRequirements: Boolean = false, silent: Boolean = false) {
+    fun claim(kitId: String, player: ServerPlayer, bypassChecks: Boolean = false, bypassRequirements: Boolean = false, silent: Boolean = false, commandSourceOverride: CommandSourceStack? = null) {
         Utils.printDebug("Attempting to claim kit $kitId for player ${player.name.string}! BypassChecks=$bypassChecks, BypassRequirements=$bypassRequirements")
         if (SkiesKits.INSTANCE.storage == null) {
             player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
@@ -50,7 +51,7 @@ class Kit(
         if (!bypassChecks) {
             if (!kitData.checkUsage(maxUses)) {
                 Utils.printDebug("Player ${player.name.string} has reached the maximum uses for kit $kitId! Kit uses=${kitData.uses} and maxUses=$maxUses")
-                actions.executeUsesActions(player, kitId, this, kitData)
+                actions.executeUsesActions(player, kitId, this, kitData, commandSourceOverride)
                 if (!silent && notifications) {
                     player.sendMessage(Utils.deserializeText(
                         ConfigManager.CONFIG.messages.kitFailedUses
@@ -64,7 +65,7 @@ class Kit(
 
             if (!kitData.checkCooldown(cooldown)) {
                 Utils.printDebug("Player ${player.name.string} is still on cooldown for kit $kitId! Kit cooldown=${kitData.getTimeRemaining(cooldown)}")
-                actions.executeCooldownActions(player, kitId, this, kitData)
+                actions.executeCooldownActions(player, kitId, this, kitData, commandSourceOverride)
                 if (!silent && notifications) {
                     player.sendMessage(
                         Utils.deserializeText(
@@ -82,17 +83,17 @@ class Kit(
             var success = true
             for ((_, requirement) in requirements.requirements) {
                 if (requirement.passesRequirements(player, kitId, this, kitData)) {
-                    requirement.executeSuccessActions(player, kitId, this, kitData)
+                    requirement.executeSuccessActions(player, kitId, this, kitData, commandSourceOverride)
                 } else {
                     success = false
-                    requirement.executeDenyActions(player, kitId, this, kitData)
+                    requirement.executeDenyActions(player, kitId, this, kitData, commandSourceOverride)
                 }
             }
 
             if (!success) {
                 Utils.printDebug("Player ${player.name.string} failed the requirements for kit $kitId!")
-                requirements.executeDenyActions(player, kitId, this, kitData)
-                actions.executeRequirementsActions(player, kitId, this, kitData)
+                requirements.executeDenyActions(player, kitId, this, kitData, commandSourceOverride)
+                actions.executeRequirementsActions(player, kitId, this, kitData, commandSourceOverride)
                 if (!silent && notifications) {
                     player.sendMessage(
                         Utils.deserializeText(
@@ -104,7 +105,7 @@ class Kit(
                 return
             }
 
-            requirements.executeSuccessActions(player, kitId, this, kitData)
+            requirements.executeSuccessActions(player, kitId, this, kitData, commandSourceOverride)
         }
 
         kitData.uses += 1
@@ -123,7 +124,7 @@ class Kit(
 
         Utils.printDebug("Player ${player.name.string} successfully claimed kit $kitId!")
 
-        actions.executeClaimedActions(player, kitId, this, kitData)
+        actions.executeClaimedActions(player, kitId, this, kitData, commandSourceOverride)
 
         if (!silent && notifications) {
             player.sendMessage(
@@ -169,3 +170,4 @@ class Kit(
                 "permission=$permission, items=$items, requirements=$requirements, actions=$actions, preview=$preview)"
     }
 }
+
