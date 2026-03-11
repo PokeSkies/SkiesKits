@@ -7,6 +7,7 @@ import com.pokeskies.skieskits.SkiesKits
 import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
+import com.pokeskies.skieskits.placeholders.PlaceholderManager
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.minecraft.core.Registry
@@ -14,17 +15,21 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.level.ServerPlayer
 import java.lang.reflect.Type
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Utils {
     val miniMessage: MiniMessage = MiniMessage.miniMessage()
 
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").also { it.timeZone = TimeZone.getDefault() }
+
     fun parsePlaceholders(player: ServerPlayer, text: String?, kitId: String? = null, kit: Kit? = null, kitData: KitData? = null): String {
         if (text == null) return ""
-        return SkiesKits.INSTANCE.placeholderManager.parse(player, text, kitId, kit, kitData)
+        return PlaceholderManager.parse(player, text, kitId, kit, kitData)
     }
 
     fun deserializeText(text: String): Component {
-        return SkiesKits.INSTANCE.adventure!!.toNative(
+        return SkiesKits.INSTANCE.adventure.toNative(
             miniMessage.deserialize(text)
             .applyFallbackStyle({ it.decoration(TextDecoration.ITALIC, false) })
         )
@@ -63,6 +68,10 @@ object Utils {
             timeFormatted.add(seconds.toString() + "s")
         }
         return java.lang.String.join(" ", timeFormatted)
+    }
+
+    fun getFormattedTimestamp(timestamp: Long): String {
+        return dateFormat.format(Date(timestamp))
     }
 
     // Thank you to Patbox for these wonderful serializers =)

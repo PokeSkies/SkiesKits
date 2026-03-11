@@ -48,7 +48,7 @@ class Kit(
         val kitData = if (userdata.kits.containsKey(kitId)) userdata.kits[kitId]!! else KitData()
 
         if (!bypassChecks) {
-            if (!kitData.checkUsage(maxUses)) {
+            if (!kitData.canClaimUses(maxUses)) {
                 Utils.printDebug("Player ${player.name.string} has reached the maximum uses for kit $kitId! Kit uses=${kitData.uses} and maxUses=$maxUses")
                 actions.executeUsesActions(player, kitId, this, kitData)
                 if (!silent && notifications) {
@@ -62,7 +62,7 @@ class Kit(
                 return
             }
 
-            if (!kitData.checkCooldown(cooldown)) {
+            if (!kitData.canClaimCooldown(cooldown)) {
                 Utils.printDebug("Player ${player.name.string} is still on cooldown for kit $kitId! Kit cooldown=${kitData.getTimeRemaining(cooldown)}")
                 actions.executeCooldownActions(player, kitId, this, kitData)
                 if (!silent && notifications) {

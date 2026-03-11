@@ -5,5 +5,8 @@ import com.pokeskies.skieskits.data.KitData
 import net.minecraft.server.level.ServerPlayer
 
 interface IPlaceholderService {
-    fun parsePlaceholders(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String
+    fun registerPlayer(placeholder: PlayerPlaceholder)
+    fun registerServer(placeholder: ServerPlaceholder)
+    fun finalizeRegister()
+    fun parse(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String
 }

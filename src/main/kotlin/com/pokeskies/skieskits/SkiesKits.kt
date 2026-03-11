@@ -54,9 +54,8 @@ class SkiesKits : ModInitializer {
     var storage: IStorage? = null
 
     var economyService: IEconomyService? = null
-    lateinit var placeholderManager: PlaceholderManager
 
-    var adventure: FabricServerAudiences? = null
+    lateinit var adventure: FabricServerAudiences
     lateinit var server: MinecraftServer
     lateinit var nbtOpts: RegistryOps<Tag>
 
@@ -90,7 +89,6 @@ class SkiesKits : ModInitializer {
         }
 
         this.economyService = IEconomyService.getEconomyService(ConfigManager.CONFIG.economy)
-        this.placeholderManager = PlaceholderManager()
 
         this.graalEngine = Engine.newBuilder()
             .option("engine.WarnInterpreterOnly", "false")
@@ -104,11 +102,11 @@ class SkiesKits : ModInitializer {
             this.nbtOpts = server.registryAccess().createSerializationContext(NbtOps.INSTANCE)
             Scheduler.start()
         })
-        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { server: MinecraftServer ->
+        ServerLifecycleEvents.SERVER_STARTED.register(ServerLifecycleEvents.ServerStarted { _: MinecraftServer ->
             ConfigManager.loadKits()
+            PlaceholderManager.init()
         })
-        ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { server: MinecraftServer ->
-            this.adventure = null
+        ServerLifecycleEvents.SERVER_STOPPED.register(ServerStopped { _: MinecraftServer ->
             this.storage?.close()
         })
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->

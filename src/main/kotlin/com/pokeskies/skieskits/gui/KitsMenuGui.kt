@@ -48,7 +48,7 @@ class KitsMenuGui(
                 continue
             }
 
-            if (!kitData.checkUsage(kit.maxUses)) {
+            if (!kitData.canClaimUses(kit.maxUses)) {
                 for (slot in options.slots) {
                     setSlot(slot, options.maxUses.createButton(player, kitId, kit, kitData)
                         .setCallback { click ->
@@ -60,7 +60,7 @@ class KitsMenuGui(
                 continue
             }
 
-            if (!kitData.checkCooldown(kit.cooldown)) {
+            if (!kitData.canClaimCooldown(kit.cooldown)) {
                 for (slot in options.slots) {
                     setSlot(slot, options.onCooldown.createButton(player, kitId, kit, kitData)
                         .setCallback { click ->

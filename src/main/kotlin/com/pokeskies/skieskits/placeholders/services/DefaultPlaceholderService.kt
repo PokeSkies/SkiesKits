@@ -3,11 +3,17 @@ package com.pokeskies.skieskits.placeholders.services
 import com.pokeskies.skieskits.config.Kit
 import com.pokeskies.skieskits.data.KitData
 import com.pokeskies.skieskits.placeholders.IPlaceholderService
+import com.pokeskies.skieskits.placeholders.PlayerPlaceholder
+import com.pokeskies.skieskits.placeholders.ServerPlaceholder
 import com.pokeskies.skieskits.utils.Utils
 import net.minecraft.server.level.ServerPlayer
 
 class DefaultPlaceholderService : IPlaceholderService {
-    override fun parsePlaceholders(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
+    override fun registerPlayer(placeholder: PlayerPlaceholder) {}
+    override fun registerServer(placeholder: ServerPlaceholder) {}
+    override fun finalizeRegister() {}
+
+    override fun parse(player: ServerPlayer, text: String, kitId: String?, kit: Kit?, kitData: KitData?): String {
         var returnText = text
             .replace("%player%", player.name.string)
 
