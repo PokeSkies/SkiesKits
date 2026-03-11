@@ -32,6 +32,10 @@ class LastUsedPlaceholder : PlayerPlaceholder {
 
         val kitData = if (userdata.kits.containsKey(kitId)) userdata.kits[kitId]!! else KitData()
 
+        if (kitData.lastUse <= 0L) {
+            return GenericResult.valid("Never")
+        }
+
         return GenericResult.valid(Utils.getFormattedTimestamp(kitData.lastUse))
     }
 
