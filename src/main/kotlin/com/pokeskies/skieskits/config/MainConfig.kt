@@ -20,6 +20,8 @@ class MainConfig(
         val database: String = "skieskits",
         val username: String = "root",
         val password: String = "",
+        @SerializedName("table_prefix")
+        val tablePrefix: String = "",
         val properties: Map<String, String> = mapOf("useUnicode" to "true", "characterEncoding" to "utf8"),
         @SerializedName("pool_settings")
         val poolSettings: StoragePoolSettings = StoragePoolSettings(),
@@ -28,7 +30,8 @@ class MainConfig(
     ) {
         override fun toString(): String {
             return "Storage(type=$type, host='$host', port=$port, database='$database', username='$username', " +
-                    "password='$password', properties=$properties, poolSettings=$poolSettings, urlOverride='$urlOverride')"
+                    "password='$password', tablePrefix='$tablePrefix', properties=$properties, " +
+                    "poolSettings=$poolSettings, urlOverride='$urlOverride')"
         }
     }
 

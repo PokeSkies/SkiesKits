@@ -2,6 +2,7 @@ package com.pokeskies.skieskits.storage.database.sql.providers
 
 import com.pokeskies.skieskits.config.MainConfig
 import com.pokeskies.skieskits.storage.database.sql.ConnectionProvider
+import com.pokeskies.skieskits.utils.Utils
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import java.sql.Connection
@@ -33,13 +34,14 @@ abstract class HikariCPProvider(private val storageConfig: MainConfig.Storage): 
         try {
             createConnection().use {
                 val statement = it.createStatement()
-                    statement.executeUpdate(
-                    "CREATE TABLE IF NOT EXISTS userdata (" +
+                    val result = statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS ${storageConfig.tablePrefix}userdata (" +
                             "uuid VARCHAR(36) NOT NULL, " +
                             "kits TEXT NOT NULL, " +
                             "PRIMARY KEY (uuid)" +
                             ")"
                 )
+                Utils.printInfo("Result from the userdata table creation: $result")
             }
         } catch (e: SQLException) {
             e.printStackTrace()

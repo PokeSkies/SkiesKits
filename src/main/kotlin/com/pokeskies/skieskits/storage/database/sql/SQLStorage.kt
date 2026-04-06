@@ -14,7 +14,7 @@ import java.sql.SQLException
 import java.util.*
 
 
-class SQLStorage(config: MainConfig.Storage) : IStorage {
+class SQLStorage(private val config: MainConfig.Storage) : IStorage {
     private val connectionProvider: ConnectionProvider = when (config.type) {
         StorageType.MYSQL -> MySQLProvider(config)
         StorageType.SQLITE -> SQLiteProvider(config)
@@ -31,7 +31,7 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
         try {
             connectionProvider.createConnection().use {
                 val statement = it.createStatement()
-                val result = statement.executeQuery(String.format("SELECT * FROM userdata WHERE uuid='%s'", uuid.toString()))
+                val result = statement.executeQuery(String.format("SELECT * FROM ${config.tablePrefix}userdata WHERE uuid='%s'", uuid.toString()))
                 if (result != null && result.next()) {
                     kits = SkiesKits.INSTANCE.gson.fromJson(result.getString("kits"), type)
                 }
@@ -46,7 +46,7 @@ class SQLStorage(config: MainConfig.Storage) : IStorage {
         return try {
             connectionProvider.createConnection().use {
                 val statement = it.createStatement()
-                statement.execute(String.format("REPLACE INTO userdata (uuid, kits) VALUES ('%s', '%s')",
+                statement.execute(String.format("REPLACE INTO ${config.tablePrefix}userdata (uuid, kits) VALUES ('%s', '%s')",
                     uuid.toString(),
                     SkiesKits.INSTANCE.gson.toJson(userData.kits)))
             }

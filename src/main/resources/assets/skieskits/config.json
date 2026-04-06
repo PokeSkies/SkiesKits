@@ -12,6 +12,7 @@
     "database":  "skieskits",
     "username": "root",
     "password": "",
+    "table_prefix": "skieskits_",
     "properties": {
       "useUnicode": true,
       "characterEncoding": "utf8"

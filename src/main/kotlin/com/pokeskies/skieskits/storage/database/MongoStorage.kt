@@ -72,7 +72,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
 
             this.mongoDatabase = mongoClient!!.getDatabase(config.database)
                 .withCodecRegistry(codecRegistry)
-            this.userdataCollection = this.mongoDatabase!!.getCollection("userdata")
+            this.userdataCollection = this.mongoDatabase!!.getCollection("${config.tablePrefix}userdata")
         } catch (e: Exception) {
             throw IOException("Error while attempting to setup Mongo Database: $e")
         }
