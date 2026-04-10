@@ -2,6 +2,7 @@ package com.pokeskies.skieskits.config
 
 import com.google.gson.annotations.SerializedName
 import com.pokeskies.skieskits.SkiesKits
+import com.pokeskies.skieskits.events.KitClaimedEvent
 import com.pokeskies.skieskits.config.actions.ActionOptions
 import com.pokeskies.skieskits.config.item.KitItem
 import com.pokeskies.skieskits.config.item.MenuItem
@@ -122,6 +123,12 @@ class Kit(
         }
 
         Utils.printDebug("Player ${player.name.string} successfully claimed kit $kitId!")
+
+        try {
+            KitClaimedEvent.EVENT.invoker().onKitClaimed(player, kitId)
+        } catch (e: Exception) {
+            Utils.printError("Error invoking KitClaimedEvent for kit $kitId: ${e.message}")
+        }
 
         actions.executeClaimedActions(player, kitId, this, kitData)
 
