@@ -111,11 +111,11 @@ class Kit(
         kitData.uses += 1
         kitData.lastUse = System.currentTimeMillis()
         userdata.kits[kitId] = kitData
+        userdata.isDirty = true
 
-        if (!SkiesKits.INSTANCE.storage!!.saveUser(player.uuid, userdata)) {
-            player.sendMessage(Utils.deserializeText("<red>There was an error with the storage system! Please check the console..."))
-            Utils.printError("Failed to save player data for ${player.name.string} while claiming kit $kitId!")
-            return
+        SkiesKits.INSTANCE.storage!!.saveUser(player.uuid, userdata).exceptionally { ex ->
+            Utils.printError("Failed to save player data for ${player.name.string} while claiming kit $kitId: ${ex.message}")
+            false
         }
 
         for (item in items) {

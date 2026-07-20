@@ -97,6 +97,7 @@ dependencies {
     implementation(include("org.xerial:sqlite-jdbc:3.43.2.2")!!)
     implementation(include("com.h2database:h2:2.2.224")!!)
     implementation(include("com.mysql:mysql-connector-j:8.2.0")!!)
+    implementation(include("com.github.ben-manes.caffeine:caffeine:3.1.8")!!)
 
     compileOnly(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
