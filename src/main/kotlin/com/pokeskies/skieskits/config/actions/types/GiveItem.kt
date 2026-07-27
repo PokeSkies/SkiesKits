@@ -41,7 +41,11 @@ class GiveItem(
 
         Utils.printDebug("[ACTION - ${type.name}] Player(${player.gameProfile.name}), ItemStack(${itemStack}: $this")
 
-        player.addItem(itemStack)
+        SkiesKits.INSTANCE.server.let { server ->
+            server.executeIfPossible {
+                player.addItem(itemStack)
+            }
+        }
     }
 
     override fun toString(): String {

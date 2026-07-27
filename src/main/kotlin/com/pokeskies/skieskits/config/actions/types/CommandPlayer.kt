@@ -29,10 +29,14 @@ class CommandPlayer(
         }
 
         for (command in commands) {
-            SkiesKits.INSTANCE.server.commands?.performPrefixedCommand(
-                source,
-                Utils.parsePlaceholders(player, command, kitId, kit, kitData)
-            )
+            SkiesKits.INSTANCE.server.let { server ->
+                server.executeIfPossible {
+                    server.commands.performPrefixedCommand(
+                        source,
+                        Utils.parsePlaceholders(player, command, kitId, kit, kitData)
+                    )
+                }
+            }
         }
     }
 
