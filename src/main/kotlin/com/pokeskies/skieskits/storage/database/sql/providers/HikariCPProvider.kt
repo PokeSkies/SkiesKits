@@ -50,8 +50,19 @@ abstract class HikariCPProvider(private val storageConfig: MainConfig.Storage): 
 
     @Throws(SQLException::class)
     override fun shutdown() {
-        if (this::dataSource.isInitialized)
+        if (!this::dataSource.isInitialized) {
+            Utils.printInfo("HikariCPProvider#shutdown() - datasource not initialized")
+            return
+        }
+
+        try {
+            Utils.printInfo("HikariCPProvider#shutdown() - closing HikariDataSource for ${getDriverName()}")
             dataSource.close()
+            Utils.printInfo("HikariCPProvider#shutdown() - HikariDataSource closed for ${getDriverName()}")
+        } catch (e: Exception) {
+            Utils.printError("HikariCPProvider#shutdown() - error while closing HikariDataSource: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     @Throws(SQLException::class)
