@@ -1,6 +1,7 @@
 {
   "title": "Kits",
   "type": "GENERIC_9x3",
+  "close_on_claim": true,
   "click": {
     "claim": [
       "ANY_LEFT_CLICK"

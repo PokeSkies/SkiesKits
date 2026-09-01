@@ -19,6 +19,7 @@ class KitsMenuGui(
     }
 
     private fun refresh() {
+        for (i in 0..<this.virtualSize) clearSlot(i)
         for ((_, item) in config.items) {
             val button = item.createButton(player, null, null, null)
             for (slot in item.slots) {
@@ -103,7 +104,8 @@ class KitsMenuGui(
                             }
 
                             kit.claim(kitId, player)
-                            close()
+                            if (config.closeOnClaim) close()
+                            else refresh()
                         } else if (config.click.preview.any { it.buttonClicks.contains(click) }) {
                             kit.createPreview(player)?.open()
                         }

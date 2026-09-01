@@ -9,6 +9,8 @@ class KitMenuConfig(
     val title: String = "Kits",
     @SerializedName("type", alternate = ["size"])
     val type: InventoryType = InventoryType.GENERIC_9x6,
+    @SerializedName("close_on_claim")
+    val closeOnClaim: Boolean = true,
     val click: ClickOptions = ClickOptions(),
     val kits: Map<String, KitMenuOptions> = emptyMap(),
     val items: Map<String, MenuItem> = emptyMap()
