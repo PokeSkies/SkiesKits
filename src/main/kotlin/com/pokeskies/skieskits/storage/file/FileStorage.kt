@@ -4,6 +4,7 @@ import com.pokeskies.skieskits.config.ConfigManager
 import com.pokeskies.skieskits.data.UserData
 import com.pokeskies.skieskits.storage.IStorage
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 class FileStorage : IStorage {
     private var fileData: FileData = ConfigManager.loadFile(STORAGE_FILENAME, FileData(), true)
@@ -17,8 +18,8 @@ class FileStorage : IStorage {
         return userData ?: UserData()
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
+    override fun saveUser(uuid: UUID, userData: UserData): CompletableFuture<Boolean> {
         fileData.userdata[uuid] = userData
-        return ConfigManager.saveFile(STORAGE_FILENAME, fileData)
+        return CompletableFuture.completedFuture(ConfigManager.saveFile(STORAGE_FILENAME, fileData))
     }
 }

@@ -60,6 +60,7 @@ class ResetUsageCommand : SubCommand {
                     if (kitData != null) {
                         kitData.uses = 0
                         userdata.kits[kitId] = kitData
+                        userdata.isDirty = true
                         SkiesKits.INSTANCE.storage?.saveUser(player.uuid, userdata)
                     }
                 }
@@ -95,6 +96,7 @@ class ResetUsageCommand : SubCommand {
                             userdata.kits[kitId] = kitData
                         }
                     }
+                    userdata.isDirty = true
                     SkiesKits.INSTANCE.storage?.saveUser(player.uuid, userdata)
                 }
             }

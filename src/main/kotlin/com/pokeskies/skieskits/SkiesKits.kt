@@ -14,10 +14,15 @@ import com.pokeskies.skieskits.economy.IEconomyService
 import com.pokeskies.skieskits.gui.GenericClickType
 import com.pokeskies.skieskits.gui.InventoryType
 import com.pokeskies.skieskits.placeholders.PlaceholderManager
+import com.pokeskies.skieskits.storage.CachedStorage
 import com.pokeskies.skieskits.storage.IStorage
 import com.pokeskies.skieskits.storage.StorageType
 import com.pokeskies.skieskits.utils.Scheduler
 import com.pokeskies.skieskits.utils.Utils
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
@@ -39,6 +44,7 @@ import org.apache.logging.log4j.Logger
 import org.graalvm.polyglot.Engine
 import java.io.File
 import java.io.IOException
+import java.util.concurrent.CompletableFuture
 
 class SkiesKits : ModInitializer {
     companion object {
@@ -116,18 +122,38 @@ class SkiesKits : ModInitializer {
         }
 
         ServerPlayConnectionEvents.JOIN.register { event, _, _ ->
-            Scheduler.scheduleTask(20, Scheduler.DelayedAction({
-                val player = event.player
-                Utils.printDebug("Player ${player.name.string} joined the server! Checking ${ConfigManager.KITS.size} kits...")
-                if (!player.hasDisconnected()) {
-                    for ((id, kit) in ConfigManager.KITS) {
-                        Utils.printDebug("Checking kit $id! Kit onJoin=${kit.onJoin}, Player hasPermission=${kit.hasPermission(player)}")
-                        if (kit.onJoin && kit.hasPermission(player)) {
-                            kit.claim(id, player, silent = true)
+            val player = event.player
+            val storage = this.storage
+            val future = if (storage is CachedStorage) {
+                storage.loadUserAsync(player.uuid)
+            } else {
+                CompletableFuture.completedFuture(null)
+            }
+
+            future.thenAccept {
+                CoroutineScope(Dispatchers.Default).launch {
+                    delay(1000)
+                    server.execute {
+                        if (!player.hasDisconnected()) {
+                            Utils.printDebug("Player ${player.name.string} joined the server! Checking ${ConfigManager.KITS.size} kits...")
+                            for ((id, kit) in ConfigManager.KITS) {
+                                Utils.printDebug("Checking kit $id! Kit onJoin=${kit.onJoin}, Player hasPermission=${kit.hasPermission(player)}")
+                                if (kit.onJoin && kit.hasPermission(player)) {
+                                    kit.claim(id, player, silent = true)
+                                }
+                            }
                         }
                     }
                 }
-            }))
+            }
+        }
+
+        ServerPlayConnectionEvents.DISCONNECT.register { event, _ ->
+            val player = event.player
+            val storage = this.storage
+            if (storage is CachedStorage) {
+                storage.unloadUser(player.uuid)
+            }
         }
     }
 

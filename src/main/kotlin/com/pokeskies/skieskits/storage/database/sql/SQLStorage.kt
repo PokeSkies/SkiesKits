@@ -12,6 +12,7 @@ import com.pokeskies.skieskits.storage.database.sql.providers.SQLiteProvider
 import java.lang.reflect.Type
 import java.sql.SQLException
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 
 class SQLStorage(private val config: MainConfig.Storage) : IStorage {
@@ -42,8 +43,8 @@ class SQLStorage(private val config: MainConfig.Storage) : IStorage {
         return UserData(kits)
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
-        return try {
+    override fun saveUser(uuid: UUID, userData: UserData): CompletableFuture<Boolean> {
+        val result = try {
             connectionProvider.createConnection().use {
                 val statement = it.createStatement()
                 statement.execute(String.format("REPLACE INTO ${config.tablePrefix}userdata (uuid, kits) VALUES ('%s', '%s')",
@@ -55,6 +56,29 @@ class SQLStorage(private val config: MainConfig.Storage) : IStorage {
             e.printStackTrace()
             false
         }
+        return CompletableFuture.completedFuture(result)
+    }
+
+    override fun saveAll(users: Map<UUID, UserData>): CompletableFuture<Void> {
+        return CompletableFuture.runAsync({
+            try {
+                connectionProvider.createConnection().use { conn ->
+                    conn.autoCommit = false
+                    val sql = "REPLACE INTO ${config.tablePrefix}userdata (uuid, kits) VALUES (?, ?)"
+                    conn.prepareStatement(sql).use { ps ->
+                        for ((uuid, userData) in users) {
+                            ps.setString(1, uuid.toString())
+                            ps.setString(2, SkiesKits.INSTANCE.gson.toJson(userData.kits))
+                            ps.addBatch()
+                        }
+                        ps.executeBatch()
+                    }
+                    conn.commit()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        })
     }
 
     override fun close() {

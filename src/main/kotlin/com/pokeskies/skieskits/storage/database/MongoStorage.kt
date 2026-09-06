@@ -26,6 +26,7 @@ import org.bson.codecs.pojo.PojoCodecProvider
 import java.io.IOException
 import java.lang.reflect.Type
 import java.util.*
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 class MongoStorage(config: MainConfig.Storage) : IStorage {
@@ -84,18 +85,19 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
             return UserData()
         }
         val doc: Document? = userdataCollection?.find(Filters.eq("uuid", uuid.toString()))?.first()
-        return if (doc != null) {
+        val user = if (doc != null) {
             val mapType: Type = object : TypeToken<HashMap<String, KitData>>() {}.type
             UserData(SkiesKits.INSTANCE.gson.fromJson(doc.getString("kits"), mapType))
         } else {
             UserData()
         }
+        return user
     }
 
-    override fun saveUser(uuid: UUID, userData: UserData): Boolean {
+    override fun saveUser(uuid: UUID, userData: UserData): CompletableFuture<Boolean> {
         if (mongoDatabase == null) {
             Utils.printError("There was an error while attempting to save data to the Mongo database!")
-            return false
+            return CompletableFuture.completedFuture(false)
         }
         val query = Filters.eq("uuid", uuid.toString())
         var doc: Document? = userdataCollection?.find(query)?.first()
@@ -106,7 +108,7 @@ class MongoStorage(config: MainConfig.Storage) : IStorage {
         doc["kits"] = SkiesKits.INSTANCE.gson.toJson(userData.kits)
         val result = this.userdataCollection?.replaceOne(query, doc, ReplaceOptions().upsert(true))
 
-        return result?.wasAcknowledged() ?: false
+        return CompletableFuture.completedFuture(result?.wasAcknowledged() ?: false)
     }
 
     override fun close() {

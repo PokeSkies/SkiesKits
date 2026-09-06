@@ -60,6 +60,7 @@ class ResetCooldownCommand : SubCommand {
                     if (kitData != null) {
                         kitData.lastUse = 0
                         userdata.kits[kitId] = kitData
+                        userdata.isDirty = true
                         SkiesKits.INSTANCE.storage?.saveUser(player.uuid, userdata)
                     }
                 }
@@ -94,6 +95,7 @@ class ResetCooldownCommand : SubCommand {
                             userdata.kits[kitId] = kitData
                         }
                     }
+                    userdata.isDirty = true
                     SkiesKits.INSTANCE.storage?.saveUser(player.uuid, userdata)
                 }
             }
